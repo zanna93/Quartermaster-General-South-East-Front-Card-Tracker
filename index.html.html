@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QMG: South Front - Card Tracker & Predictor</title>
+    <style>
+        :root {
+            --bg-light: #e6e1d6;
+            --panel-bg: #ffffff;
+            --panel-border: #94a3b8;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            
+            /* DISTINCT NATION COLOR PALETTE */
+            /* 🇬🇧 UK: Warm Amber / Tan */
+            --uk-main: #b8924a;
+            --uk-bg: #fef3c7;
+            --uk-border: #d97706;
+            --uk-text: #78350f;
+            
+            /* 🇺🇸 USA: Olive / Military Green */
+            --usa-main: #15803d;
+            --usa-bg: #dcfce7;
+            --usa-border: #16a34a;
+            --usa-text: #14532d;
+            
+            /* 🇫🇷 France: Royal / Pastel Blue */
+            --france-main: #1d4ed8;
+            --france-bg: #dbeafe;
+            --france-border: #2563eb;
+            --france-text: #1e3a8a;
+            
+            /* 🇮🇹 Pact (Italy): LIGHT ICE GRAY (Grigio Chiaro) */
+            --pact-main: #64748b;
+            --pact-bg: #f8fafc;
+            --pact-border: #94a3b8;
+            --pact-text: #334155;
+
+            /* 🇩🇪 Germany: DARK CHARCOAL / FELDGRAU GRAY (Grigio Molto Scuro) */
+            --germany-main: #1e293b;
+            --germany-bg: #334155;
+            --germany-border: #0f172a;
+            --germany-text: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            padding: 12px;
+            font-size: 13.5px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1.5px solid var(--panel-border);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        h1 { font-size: 1.25rem; color: #78350f; display: flex; align-items: center; gap: 8px; font-weight: 800; }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .faction-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 7px 13px;
+            border-radius: 6px;
+            border: 1.5px solid var(--panel-border);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+            color: var(--text-main);
+            font-size: 0.82rem;
+        }
+
+        .btn-axis.active { background: #991b1b; color: white; border-color: #7f1d1d; box-shadow: 0 2px 6px rgba(153,27,27,0.35); }
+        .btn-allies.active { background: #1e40af; color: white; border-color: #1e3a8a; box-shadow: 0 2px 6px rgba(30,64,175,0.35); }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+
+        .stats-panel {
+            background: var(--panel-bg);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1.5px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-left: 4px solid #2563eb;
+            border-top: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .stat-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
+        .stat-value { font-size: 1.35rem; font-weight: bold; margin-top: 2px; color: #0f172a; }
+
+        /* Counter Boxes */
+        .counter-box {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-top: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .counter-box.hand { border-left: 4px solid #16a34a; }
+        .counter-box.blind { border-left: 4px solid #9333ea; }
+
+        .counter-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .counter-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid var(--panel-border);
+            background: #ffffff;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counter-btn:hover { background: #e2e8f0; }
+
+        .counter-input {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: bold;
+            background: #ffffff;
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .counter-input.green { color: #15803d; }
+        .counter-input.purple { color: #7e22ce; }
+
+        /* Phase Switch Toggle */
+        .phase-switch-box {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .phase-switch-title {
+            font-size: 0.75rem;
+            color: #78350f;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .switch-group {
+            display: flex;
+            background: #cbd5e1;
+            padding: 2px;
+            border-radius: 6px;
+            gap: 2px;
+        }
+
+        .switch-btn {
+            flex: 1;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .switch-btn.active { background: #0284c7; color: white; }
+        .switch-btn.active.late { background: #b91c1c; color: white; }
+
+        /* REACTION PREDICTOR WITH DISTINCT NATION BACKGROUNDS */
+        .reaction-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .faction-reaction-group {
+            border-radius: 6px;
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border: 1.5px solid;
+        }
+
+        .faction-reaction-group.uk { border-color: var(--uk-border); background-color: var(--uk-bg); }
+        .faction-reaction-group.usa { border-color: var(--usa-border); background-color: var(--usa-bg); }
+        .faction-reaction-group.francia { border-color: var(--france-border); background-color: var(--france-bg); }
+        .faction-reaction-group.germania { border-color: var(--germany-border); background-color: #f1f5f9; }
+        .faction-reaction-group.patto { border-color: var(--pact-border); background-color: var(--pact-bg); }
+
+        .faction-group-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(0,0,0,0.12);
+        }
+
+        .reaction-row-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            background: #ffffff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .reaction-row-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .prob-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            line-height: 1.2;
+        }
+
+        .prob-high { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+        .prob-med { background: #fffbeb; color: #b45309; border: 1px solid #fde047; }
+        .prob-low { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+
+        .terr-inline {
+            font-size: 0.68rem;
+            color: #92400e;
+            font-weight: 700;
+            margin-top: 1px;
+            padding-left: 4px;
+        }
+
+        /* Main Cards Area */
+        .cards-panel {
+            background: var(--panel-bg);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1.5px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+
+        .filters {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 4px 10px;
+            background: #f1f5f9;
+            border: 1px solid var(--panel-border);
+            color: var(--text-muted);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 10px;
+            max-height: 68vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* Game Cards - Distinct Backgrounds & Clear Contrast */
+        .card-item {
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        .card-item.uk { background-color: var(--uk-bg); border-color: var(--uk-border); color: var(--uk-text); }
+        .card-item.usa { background-color: var(--usa-bg); border-color: var(--usa-border); color: var(--usa-text); }
+        .card-item.francia { background-color: var(--france-bg); border-color: var(--france-border); color: var(--france-text); }
+        .card-item.patto { background-color: var(--pact-bg); border-color: var(--pact-border); color: var(--pact-text); }
+        
+        /* GERMANY: DARK CHARCOAL CARD WITH WHITE TEXT */
+        .card-item.germania { 
+            background-color: var(--germany-bg); 
+            border-color: var(--germany-border); 
+            color: var(--germany-text); 
+        }
+        .card-item.germania .card-title { color: #ffffff !important; }
+        .card-item.germania .card-text { color: #f1f5f9 !important; }
+        .card-item.germania .reaction-label { color: #f8fafc !important; }
+
+        /* Locked Late War Cards Styling */
+        .card-item.late-locked {
+            opacity: 0.65;
+            border-style: dashed !important;
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 10px, transparent 10px, transparent 20px);
+        }
+
+        .card-item.played {
+            opacity: 0.35;
+            filter: grayscale(85%);
+            background-color: #cbd5e1 !important;
+            border-color: #64748b !important;
+            border-style: solid !important;
+            color: #0f172a !important;
+        }
+        .card-item.played .card-title { color: #0f172a !important; }
+        .card-item.played .card-text { color: #334155 !important; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #0f172a;
+            line-height: 1.25;
+        }
+
+        .card-phase {
+            font-size: 0.62rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .phase-prima { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
+        .phase-intermedio { background: #fef9c3; color: #713f12; border: 1px solid #fde047; }
+        .phase-tardivo { background: #fee2e2; color: #7f1d1d; border: 1px solid #fca5a5; }
+        .phase-contingenza { background: #f3e8ff; color: #581c87; border: 1px solid #d8b4fe; }
+
+        .lock-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.62rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .faction-flag-badge {
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .faction-flag-badge.uk { background: var(--uk-main); }
+        .faction-flag-badge.usa { background: var(--usa-main); }
+        .faction-flag-badge.francia { background: var(--france-main); }
+        .faction-flag-badge.germania { background: var(--germany-main); }
+        .faction-flag-badge.patto { background: var(--pact-main); }
+
+        .card-text {
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.38;
+            font-weight: 500;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 6px;
+        }
+
+        .reaction-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #0f172a;
+        }
+
+        .toggle-btn {
+            padding: 4px 9px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            border: 1.5px solid #2563eb;
+            background: #ffffff;
+            color: #2563eb;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .card-item.played .toggle-btn {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        /* COLLAPSIBLE CONTINGENCY BOX */
+        .contingency-box {
+            background: #faf5ff;
+            border: 1.5px solid #c084fc;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .contingency-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .contingency-title-text {
+            color: #6b21a8;
+            font-size: 0.82rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contingency-toggle-btn {
+            background: #f3e8ff;
+            border: 1px solid #c084fc;
+            color: #6b21a8;
+            font-weight: bold;
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .contingency-content {
+            margin-top: 10px;
+            display: block;
+        }
+
+        .contingency-content.collapsed {
+            display: none;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="ui-app-title">⚔️ QMG South Front - Card Tracker & Predictor</h1>
+        <div class="header-controls">
+            <!-- Faction Selector -->
+            <div class="faction-tabs">
+                <button class="btn btn-axis active" id="btn-axis" onclick="setFaction('Asse')">AXIS (Pact / Germany)</button>
+                <button class="btn btn-allies" id="btn-allies" onclick="setFaction('Alleati')">ALLIES (UK / USA / France)</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Stats Sidebar -->
+        <div class="stats-panel">
+
+            <!-- Phase / Late War Switch -->
+            <div class="phase-switch-box">
+                <div class="phase-switch-title">
+                    <span>⏳ ACTIVE DECK</span>
+                    <span id="phase-badge" style="font-size:0.7rem; color:#16a34a; font-weight:bold;">Mid War</span>
+                </div>
+                <div class="switch-group">
+                    <button class="switch-btn active" id="btn-late-off" onclick="toggleLateWar(false)">1. Mid War</button>
+                    <button class="switch-btn late" id="btn-late-on" onclick="toggleLateWar(true)">2. + Late War</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Opponent Hand Size Input -->
+            <div class="counter-box hand">
+                <div class="stat-title">OPPONENT HAND SIZE</div>
+                <div class="counter-control">
+                    <button class="counter-btn" onclick="adjustHandSize(-1)">-</button>
+                    <input type="number" id="hand-size-input" class="counter-input green" value="5" min="0" max="12" onchange="onHandSizeChange()">
+                    <button class="counter-btn" onclick="adjustHandSize(1)">+</button>
+                    <span style="font-size:0.7rem; color:var(--text-muted); line-height:1.2;">
+                        Current hand.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Blind / Unknown Discards Counter -->
+            <div class="counter-box blind">
+                <div class="stat-title">FACE-DOWN DISCARDS / CONSCRIPTION</div>
+                <div class="counter-control">
+                    <button class="counter-btn" onclick="adjustBlindDiscards(-1)">-</button>
+                    <input type="number" id="blind-input" class="counter-input purple" value="0" min="0" max="30" onchange="onBlindChange()">
+                    <button class="counter-btn" onclick="adjustBlindDiscards(1)">+</button>
+                    <span style="font-size:0.7rem; color:var(--text-muted); line-height:1.2;">
+                        Face-down discards.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Deck Stats -->
+            <div class="stat-box">
+                <div class="stat-title">Remaining Deck</div>
+                <div class="stat-value" id="deck-remaining">0 cards</div>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;" id="deck-sub-breakdown">
+                    <!-- Breakdown -->
+                </div>
+            </div>
+
+            <!-- Streamlined Reactions Probability Section (NO SCROLL!) -->
+            <div>
+                <div class="stat-title" style="margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>CHANCE IN HAND BY NATION</span>
+                    <span style="font-size:0.68rem; color:#855b18; font-weight:700;">⚡ Live %</span>
+                </div>
+                <div class="reaction-stats" id="reaction-stats-list">
+                    <!-- Compact Streamlined Groups -->
+                </div>
+            </div>
+
+            <button class="btn" onclick="resetCurrentFaction()" style="background:#f1f5f9; border:1px solid #cbd5e1; color:#1e293b; margin-top:2px;">
+                🔄 Reset Active Faction
+            </button>
+        </div>
+
+        <!-- Main Card List Panel -->
+        <div class="cards-panel">
+            
+            <div class="filters" id="filter-buttons-container">
+                <button class="filter-btn active" onclick="setFilter('all', this)" id="f-all">All Cards</button>
+                <button class="filter-btn" onclick="setFilter('deck', this)" id="f-deck">In Deck / Probable</button>
+                <button class="filter-btn" onclick="setFilter('played', this)" id="f-played">Discarded Revealed</button>
+                <button class="filter-btn" onclick="setFilter('Prima partita', this)" id="f-prima">First Game</button>
+                <button class="filter-btn" onclick="setFilter('Intermedio', this)" id="f-mid">Mid War</button>
+                <button class="filter-btn" onclick="setFilter('Tardivo', this)" id="f-late">Late War</button>
+            </div>
+
+            <!-- Main Card Grid -->
+            <div class="card-grid" id="main-card-grid"></div>
+
+            <!-- Collapsible Contingency Section -->
+            <div class="contingency-box">
+                <div class="contingency-header-bar" onclick="toggleContingencyBox()">
+                    <div class="contingency-title-text">
+                        <span>🔮 CONTINGENCY CARDS (Public Info)</span>
+                        <span style="font-size:0.72rem; font-weight:normal; color:#6b21a8;">3 Physical Cards (6 Sides)</span>
+                    </div>
+                    <button class="contingency-toggle-btn" id="cont-collapse-btn">▼ Hide</button>
+                </div>
+                <div class="contingency-content" id="contingency-content-area">
+                    <div class="card-grid" id="contingency-grid" style="max-height: initial;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const rawData = {"deck": [{"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Comando Supremo", "Nome Carta (EN)": "Commando Supremo", "Descrizione / Effetto (IT)": "Pesca 2 carte; poi svolgi un'altra azione.", "Descrizione / Effetto (EN)": "Draw 2 cards; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Guerra Italo-Greca", "Nome Carta (EN)": "Greco-Italian War", "Descrizione / Effetto (IT)": "Dichiara guerra alla Grecia, se possibile. Schiera una fanteria del Patto in Albania; poi muovi quella fanteria o attacca con una forza contenente quella fanteria.", "Descrizione / Effetto (EN)": "Declare war on Greece, if possible. Deploy a Pact infantry in Albania; then move that infantry or attack with a force containing that infantry.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Rommel Attacca!", "Nome Carta (EN)": "Rommel Strikes!", "Descrizione / Effetto (IT)": "Attacca uno spazio desertico con una forza Tedesca contenente un Carro Armato; poi svolgi un’altra azione.", "Descrizione / Effetto (EN)": "Attack a Desert Climate space with a German force containing a tank; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Aquila Completata", "Nome Carta (EN)": "Aquila Completed", "Descrizione / Effetto (IT)": "Scartare 2 carte per schierare assieme una portaerei del Patto e un aereo in uno spazio di acqua adiacente a Napoli.", "Descrizione / Effetto (EN)": "Discard 2 cards to deploy a Pact carrier and airplane together in a water space adjacent to Naples.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Decima Flottiglia MAS", "Nome Carta (EN)": "Decima Flottiglia MAS", "Descrizione / Effetto (IT)": "Elimina una flotta o una portaerei Alleata adiacente a una fanteria del Patto, a meno che gli Alleati non scartino una carta della fazione di quel pezzo con la reazione Ritirata Navale.", "Descrizione / Effetto (EN)": "Eliminate an Allied fleet adjacent to a Pact infantry, unless the Allies discard a card of that piece's faction with the Withdraw Navy reaction.", "Reazione (IT)": "RITIRO DELLA MARINA", "Reazione (EN)": "Withdraw Navy"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Colpo di Stato della Piazza d’Oro", "Nome Carta (EN)": "Golden Square Coup", "Descrizione / Effetto (IT)": "Se l'Iraq è neutrale o non occupato: guadagna 1 Punto Vittoria; poi, se possibile, attiva l'Iraq per l'Asse.", "Descrizione / Effetto (EN)": "If Iraq is either neutral or unoccupied: Gain 1 VP; then activate Iraq for the Axis, if possible.", "Reazione (IT)": "RITIRATA", "Reazione (EN)": "Retreat"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "L’Italia occupa il Somaliland Britannico", "Nome Carta (EN)": "Italy Occupies British Somaliland", "Descrizione / Effetto (IT)": "Guadagna 2 Punti Vittoria a meno che gli Alleati non eliminino un pezzo alleato dal Mar Rosso o dalle adiacenze.", "Descrizione / Effetto (EN)": "Gain 2 VPs unless the Allies eliminate an Axis piece in or adjacent to Red Sea.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Luftflotte 2", "Nome Carta (EN)": "Luftflotte 2", "Descrizione / Effetto (IT)": "Schiera un aereo Tedesco in uno spazio a clima desertico; Poi fai un'altra azione. Gli aerei Tedeschi possono supportare forze attaccanti del Patto durante questo turno.", "Descrizione / Effetto (EN)": "Deploy a German airplane in a Desert Climate space; then take another action. German airplanes may support attacking Pact forces during this turn.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "La Gran Bretagna Sostiene la Grecia", "Nome Carta (EN)": "Britain Supports Greece", "Descrizione / Effetto (IT)": "Attiva la Grecia per gli Alleati, se possibile; poi puoi schierare una fanteria UK ad Atene o a Creta.", "Descrizione / Effetto (EN)": "Activate Greece for the Allies, if possible; then you may deploy UK infantry in Athens or Crete.", "Reazione (IT)": "TIENI DURO Atene o Creta", "Reazione (EN)": "Stand Fast (Atene o Creta)"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Operazione Compass", "Nome Carta (EN)": "Operation Compass", "Descrizione / Effetto (IT)": "Attacca Tobruk o una casella di terra adiacente con una forza UK; poi puoi muovere 1 pezzo dalla forza attaccante nella casella attaccata.", "Descrizione / Effetto (EN)": "Attack Tobruk or an adjacent land space with a UK force; then you may move 1 piece from the attacking force into the attacked space.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Desert Rats", "Nome Carta (EN)": "Desert Rats", "Descrizione / Effetto (IT)": "Muovi una fanteria o un carro armato UK in una casella di Clima Desertico; poi puoi scartare 1 carta per eseguire un'altra azione.", "Descrizione / Effetto (EN)": "Move a UK infantry or tank into a Desert Climate space; then you may discard 1 card to take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "HMS Illustrious", "Nome Carta (EN)": "HMS Illustrious", "Descrizione / Effetto (IT)": "Schiera assieme una portaerei e un aereo Britannici in uno spazio di acqua adiacente a Gibilterra.", "Descrizione / Effetto (EN)": "Deploy a UK carrier and airplane together in a water space adjacent to Gibraltar.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Contanti e trasporti", "Nome Carta (EN)": "Cash and Carry", "Descrizione / Effetto (IT)": "Scarta 1 carta; schiera un pezzo britannico a tua scelta in uno spazio con \"Atlantico\" nel nome; Poi fai un'altra azione.", "Descrizione / Effetto (EN)": "Discard 1 card; deploy a UK piece of your choice in a space with \"Atlantic\" in its name; then take another action.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Rocca di Gibilterra", "Nome Carta (EN)": "Rock of Gibraltar", "Descrizione / Effetto (IT)": "Schiera una flotta britannica nell'Atlantico meridionale e/o una fanteria britannica a Gibilterra.", "Descrizione / Effetto (EN)": "Deploy a UK fleet in the Atlantic and/or an infantry in Gibraltar.", "Reazione (IT)": "TIENI DURO Gibilterra", "Reazione (EN)": "Stand Fast (Gibilterra)"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Dono da un Miliardo di Dollari", "Nome Carta (EN)": "Billion Dollar Gift", "Descrizione / Effetto (IT)": "Pesca 1 carta; poi schiera un pezzo Britannico a tua scelta.", "Descrizione / Effetto (EN)": "Draw 1 card; then deploy a UK piece of your choice.", "Reazione (IT)": "RITIRO DELLA MARINA", "Reazione (EN)": "Withdraw Navy"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Rinforzi ANZAC", "Nome Carta (EN)": "ANZAC Reinforcements", "Descrizione / Effetto (IT)": "Recluta 1 o 2 fanterie UK in o adiacenti al Mar Rosso (non necessariamente insieme).", "Descrizione / Effetto (EN)": "Recruit 1 or 2 UK infantry in or adjacent to Red Sea (not necessarily together).", "Reazione (IT)": "TIENI DURO Egitto o El Alamein", "Reazione (EN)": "Stand Fast (Egitto o El Alamein)"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Regia Marina", "Nome Carta (EN)": "Regia Marina", "Descrizione / Effetto (IT)": "Schiera una flotta del Patto o attacca con una forza che contenga una flotta del Patto.", "Descrizione / Effetto (EN)": "Deploy a Pact fleet or attack with a force containing a Pact fleet.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Operazione 25", "Nome Carta (EN)": "Operation 25", "Descrizione / Effetto (IT)": "Dichiara guerra alla Jugoslavia, se possibile. Schiera una fanteria o un carro armato Tedesco adiacente alla Jugoslavia; poi muovi quel pezzo o attacca con una forza che lo contenga.", "Descrizione / Effetto (EN)": "Declare war on Yugoslavia, if possible. Deploy a German infantry or tank adjacent to Yugoslavia; then move that piece or attack with a force containing that piece.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Re Pietro raggiunge la maggiore età", "Nome Carta (EN)": "King Peter Comes of Age", "Descrizione / Effetto (IT)": "Se la Jugoslavia è neutrale o disoccupata: guadagna 1 Punto Vittoria; poi, se possibile, attiva la Jugoslavia per gli Alleati.", "Descrizione / Effetto (EN)": "If Yugoslavia is either neutral or unoccupied: Gain 1 VP; then activate Yugoslavia for the Allies, if possible.", "Reazione (IT)": "RITIRATA", "Reazione (EN)": "Retreat"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Razziatori di Convogli", "Nome Carta (EN)": "Convoy Raiders", "Descrizione / Effetto (IT)": "Guadagna 1 PV a meno che l'Asse non scarti 2 carte; poi esegui un'altra azione.", "Descrizione / Effetto (EN)": "Gain 1 VP unless the Axis discards 2 cards; then take another action.", "Reazione (IT)": "RITIRO DELLA MARINA", "Reazione (EN)": "Withdraw Navy"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Regia Aeronautica", "Nome Carta (EN)": "Regia Aeronautica", "Descrizione / Effetto (IT)": "Schiera un aeroplano del Patto; poi puoi attaccare con una forza del Patto nella stessa casella di quell'aeroplano.", "Descrizione / Effetto (EN)": "Deploy a Pact airplane; then you may attack with a Pact force in the same space as that airplane.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Fallschirmjaegers", "Nome Carta (EN)": "Fallschirmjäger", "Descrizione / Effetto (IT)": "Recluta una fanteria Tedesca entro 2 caselle da un aeroplano Tedesco; poi esegui un'altra azione.", "Descrizione / Effetto (EN)": "Recruit a German infantry within 2 spaces of a German airplane; then take another action.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Battaglia di Gondar", "Nome Carta (EN)": "Battle of Gondar", "Descrizione / Effetto (IT)": "Elimina un pezzo del Regno Unito dal Mar Rosso o dalle adiacenze per ottenere 2 Punti Vittoria.", "Descrizione / Effetto (EN)": "Eliminate a UK piece in or adjacent to Red Sea to gain 2 VPs.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Ottava Armata Britannica", "Nome Carta (EN)": "British Eighth Army", "Descrizione / Effetto (IT)": "Schiera una fanteria o un carro armato britannico in Egitto o nelle vicinanze; poi muovi quel pezzo o attacca con una forza che lo contenga.", "Descrizione / Effetto (EN)": "Deploy a UK infantry or tank in or adjacent to Egypt; then move that piece or attack with a force containing that piece.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Operazione Herkules", "Nome Carta (EN)": "Operation Herkules", "Descrizione / Effetto (IT)": "Schiera una fanteria Tedesca o del Patto adiacente a Malta; poi muovi quella fanteria o attacca con una forza contenente quella fanteria.", "Descrizione / Effetto (EN)": "Deploy a German or Pact infantry adjacent to Malta; then move that infantry or attack with a force containing that infantry.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Divisione Libica", "Nome Carta (EN)": "Libyan Divisions", "Descrizione / Effetto (IT)": "Schiera una fanteria del Patto a Bengasi o in una casella di terra adiacente; poi muovi quella fanteria o attacca con una forza contenente quella fanteria.", "Descrizione / Effetto (EN)": "Deploy a Pact infantry in Benghazi or an adjacent space; then move that infantry or attack with a force containing it.", "Reazione (IT)": "RITIRATA", "Reazione (EN)": "Retreat"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Pattuglie di Neutralità", "Nome Carta (EN)": "Neutrality Patrols", "Descrizione / Effetto (IT)": "Recluta 2 flotte USA in una casella che ha \"Atlantico\" nel nome.", "Descrizione / Effetto (EN)": "Recruit 2 US fleets in a space with \"Atlantic\" in its name.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Stazione Mediterranea", "Nome Carta (EN)": "Mediterranean Station", "Descrizione / Effetto (IT)": "Schiera una flotta UK nel Mediterraneo Occidentale o nel Mediterraneo Orientale; poi muovi quella flotta o attacca con una forza contenente quella flotta.", "Descrizione / Effetto (EN)": "Deploy a UK fleet in Western Mediterranean or Eastern Mediterranean; then move that fleet or attack with a force containing that fleet.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "SM.79 Sparviero", "Nome Carta (EN)": "SM.79 Sparviero", "Descrizione / Effetto (IT)": "Elimina un pezzo Alleato entro 2 caselle da un aereo del Patto, a meno che gli Alleati non scartino una carta della fazione di quel pezzo con la reazione Anti-Aerea.", "Descrizione / Effetto (EN)": "Eliminate an Allies piece within 2 spaces of a Pact airplane, unless the Allies discard a card of that piece's faction with the Anti-Air reaction.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Jagdgeschwader 27", "Nome Carta (EN)": "Jagdgeschwader 27", "Descrizione / Effetto (IT)": "Schiera un aeroplano Tedesco in una casella di terra; poi puoi attaccare una casella di terra con una forza Tedesca nella stessa casella di quell'aeroplano.", "Descrizione / Effetto (EN)": "Deploy a German airplane in a land space; then you may attack a land space with a German force in the same space as that airplane.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Fede, Speranza e Carità", "Nome Carta (EN)": "Faith, Hope & Charity", "Descrizione / Effetto (IT)": "Se gli Alleati controllano Malta: Guadagna 1 PV; recluta un aeroplano UK a Malta; e posiziona il segnalino Deposito di Malta.", "Descrizione / Effetto (EN)": "If the Allies control Malta: Gain 1 VP; recruit a UK airplane in Malta; and place the Malta Depot marker.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Mers-el-Kébir", "Nome Carta (EN)": "Mers-el-Kébir", "Descrizione / Effetto (IT)": "Guadagna 2 PV a meno che l'Asse non elimini una flotta del Patto o scarti una carta del Patto con la reazione Ritirata Navale.", "Descrizione / Effetto (EN)": "Gain 2 VPs unless the Axis either eliminates a Pact fleet or discards a Pact card with the Withdraw Navy reaction.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Carro armato leggero L3/35", "Nome Carta (EN)": "L3/35 Tankette", "Descrizione / Effetto (IT)": "Muovi una fanteria o un carro armato del Patto in una casella di Clima Desertico; poi esegui un'altra azione.", "Descrizione / Effetto (EN)": "Move a Pact infantry or tank into a Desert Climate space; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Prima partita", "Nome Carta (IT)": "Afrika Korps", "Nome Carta (EN)": "Afrika Korps", "Descrizione / Effetto (IT)": "Schiera una fanteria o un carro Tedeschi in uno spazio a clima Desertico; poi fai un'altra azione.", "Descrizione / Effetto (EN)": "Deploy a German infantry or tank in a Desert Climate space; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Francia", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Legione Straniera Francese", "Nome Carta (EN)": "French Foreign Legion", "Descrizione / Effetto (IT)": "Schiera una fanteria Francese; poi effettua un'altra azione.", "Descrizione / Effetto (EN)": "Deploy a French infantry; then take another action.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Attacco notturno degli Swordfish", "Nome Carta (EN)": "Swordfish Night Attack", "Descrizione / Effetto (IT)": "Attacca uno spazio di acqua con una forza Britannica che ha un aeroplano; poi svolgi un'altra azione.", "Descrizione / Effetto (EN)": "Attack a water space with a UK force containing a UK airplane; then take another action.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "L’Asse conquista la Marina di Vichy", "Nome Carta (EN)": "Axis Seize Vichy Navy", "Descrizione / Effetto (IT)": "Schiera una flotta e una fanteria del Patto in o adiacenti all'Algeria (non necessariamente insieme), a meno che gli Alleati Occidentali non scartino 3 carte.", "Descrizione / Effetto (EN)": "Deploy a Pact fleet and infantry in/adjacent to Algeria (not necessarily together), unless the Western Allies discard 3 cards.", "Reazione (IT)": "RITIRO DELLA MARINA", "Reazione (EN)": "Withdraw Navy"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Armata Corazzata Africa", "Nome Carta (EN)": "Panzer Army Africa", "Descrizione / Effetto (IT)": "Schiera una fanteria o un carro armato Tedesco in una casella di Clima Desertico; poi puoi attaccare con una forza contenente quel pezzo.", "Descrizione / Effetto (EN)": "Deploy a German infantry or tank in a Desert Climate space; then you may attack with a force containing that piece.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Portaerei Inaffondabile", "Nome Carta (EN)": "Unsinkable Carrier", "Descrizione / Effetto (IT)": "Se gli Alleati controllano Malta: Guadagna 2 PV, a meno che l'Asse non elimini una flotta del Patto o elimini tutti i pezzi dell'Asse in caselle di Clima Desertico.", "Descrizione / Effetto (EN)": "If the Allies control Malta: Gain 2 VPs, unless the Axis either eliminates a Pact fleet or eliminates all Axis pieces in Desert Climate spaces.", "Reazione (IT)": "TIENI DURO Malta", "Reazione (EN)": "Stand Fast (Malta)"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Forze di Difesa dell’Unione", "Nome Carta (EN)": "Union Defense Force", "Descrizione / Effetto (IT)": "Schiera una fanteria Britannica e un aeroplano Britannico in Egitto.", "Descrizione / Effetto (EN)": "Deploy a UK infantry and airplane in Egypt.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Governo di Salvataggio Nazionale", "Nome Carta (EN)": "Government of National Salvation", "Descrizione / Effetto (IT)": "Schiera una fanteria del Patto in Jugoslavia; poi guadagna 1 PV se l'Asse controlla la Jugoslavia e tutte le caselle di terra adiacenti.", "Descrizione / Effetto (EN)": "Deploy a Pact infantry in Yugoslavia; then gain 1 VP if the Axis controls Yugoslavia and all adjacent land spaces.", "Reazione (IT)": "RITIRATA", "Reazione (EN)": "Retreat"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Monte Cassino", "Nome Carta (EN)": "Monte Cassino", "Descrizione / Effetto (IT)": "Schiera 1 o 2 fanterie Tedesche a Roma.", "Descrizione / Effetto (EN)": "Deploy 1 or 2 German infantry in Rome.", "Reazione (IT)": "TIENI DURO Roma o Napoli", "Reazione (EN)": "Stand Fast (Roma o Napoli)"}, {"Fazione": "Francia", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Gruppo Géo Gras", "Nome Carta (EN)": "Géo Gras Group", "Descrizione / Effetto (IT)": "Posiziona un segnalino controllo degli Alleati Occidentali in uno tra Marocco, Algeria o Tunisia, se è non occupato e adiacente a un pezzo USA; poi esegui un'altra azione.", "Descrizione / Effetto (EN)": "Place a French control marker in one of Morocco, Algeria, or Tunisia, if it is unoccupied or adjacent to a USA piece; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "B-25 Mitchell", "Nome Carta (EN)": "B-25 Mitchell", "Descrizione / Effetto (IT)": "Schiera un aereo Statunitense o Britannico. Poi effettua un'altra azione.", "Descrizione / Effetto (EN)": "Deploy a USA airplane; then take another action.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Supporto Coloniale di Vichy", "Nome Carta (EN)": "Vichy Colonial Support", "Descrizione / Effetto (IT)": "Ottieni 1 Punto Vittoria ogni due (arrotondati per difetto) di questi spazi controllati dall'Asse: Marocco, Algeria, Tunisia e/o Siria-Libano.", "Descrizione / Effetto (EN)": "Gain 1 VP for each two (rounded down) of these spaces the Axis controls: Morocco, Algeria, Tunisia, and/or Syria-Lebanon.", "Reazione (IT)": "RITIRATA", "Reazione (EN)": "Retreat"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Divisioni da Campo della Luftwaffe", "Nome Carta (EN)": "Luftwaffe Field Divisions", "Descrizione / Effetto (IT)": "Schiera una fanteria Tedesca nella stessa casella di un aeroplano Tedesco; poi muovi quella fanteria o attacca con una forza contenente quella fanteria.", "Descrizione / Effetto (EN)": "Deploy a German infantry in the same space as a German airplane; then move that infantry or attack with a force containing that infantry.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Operazione Torch", "Nome Carta (EN)": "Operation Torch", "Descrizione / Effetto (IT)": "Recluta una fanteria, un carro armato e un aereo Statunitensi nello stesso spazio terrestre adiacente a una flotta Statunitense che è nel Mediterraneo occidentale o nel Golfo di Gabes.", "Descrizione / Effetto (EN)": "Recruit a USA infantry, tank, and airplane in the same land space adjacent to a USA fleet in Western Mediterranean or Gulf of Gabes.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Ethnikí Antístasi", "Nome Carta (EN)": "Ethniki Antistasi", "Descrizione / Effetto (IT)": "Guadagna 2 Punti Vittoria a meno che l'Asse non elimini un pezzo dell'Asse da Atene o Creta, o scarti 3 carte.", "Descrizione / Effetto (EN)": "Gain 2 VPs unless the Axis either eliminates an Axis piece in Athens or Crete, or discards 3 cards.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Bazooka", "Nome Carta (EN)": "Bazookas", "Descrizione / Effetto (IT)": "Elimina un carro armato dell'Asse adiacente a una fanteria Statunitense; poi fai un'altra azione.", "Descrizione / Effetto (EN)": "Eliminate an Axis tank adjacent to a USA infantry; then take another action.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Esercito Nazionale Repubblicano", "Nome Carta (EN)": "National Republican Army", "Descrizione / Effetto (IT)": "Se un pezzo Tedesco è a Roma: guadagna 1 Punto Vittoria; poi puoi schierare una fanteria del Patto a Roma", "Descrizione / Effetto (EN)": "If a German piece is in Rome: Gain 1 VP; then deploy a Pact infantry in Rome.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Impero Italiano", "Nome Carta (EN)": "Impero Italiano", "Descrizione / Effetto (IT)": "Guadagna 1 Punto Vittoria per ciascuno di due spazi (arrotondati per eccesso) di questi spazi controllati dall'Asse: Gibilterra, Malta, Jugoslavia, Atene, Creta, Egitto, Cipro, Palestina-Giordania e Iraq.", "Descrizione / Effetto (EN)": "Gain 1 VP for each two (rounded up) of these spaces the Axis controls: Gibraltar, Malta, Yugoslavia, Athens, Crete, Egypt, Cyprus, Palestine-Jordan, and Iraq.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "P-51 Mustang", "Nome Carta (EN)": "P-51 Mustang", "Descrizione / Effetto (IT)": "Schiera 1 o 2 Aerei Statunitensi.", "Descrizione / Effetto (EN)": "Deploy 1 or 2 USA airplanes.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Conferenza di Casablanca", "Nome Carta (EN)": "Casablanca Conference", "Descrizione / Effetto (IT)": "Se gli Alleati controllano Marocco e Algeria: gli Alleati Occidentali pescano 3 carte; poi eseguono un'altra azione.", "Descrizione / Effetto (EN)": "If the Allies control Morocco and Algeria: The Western Allies draw 3 cards; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "Patto", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Mare Nostrum", "Nome Carta (EN)": "Mare Nostrum", "Descrizione / Effetto (IT)": "Guadagna 1 Punto Vittoria per ogni 2 flotte e/o portaerei del Patto (arrotondate per eccesso) presenti sul tabellone.", "Descrizione / Effetto (EN)": "Gain 1 VP for each two Pact fleets and/or carriers (rounded up) on the board.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "Germania", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Raid Aereo a Bari", "Nome Carta (EN)": "Air Raid on Bari", "Descrizione / Effetto (IT)": "Schiera un aereo tedesco in uno spazio terrestre; Poi puoi attaccare uno zona di acqua con una forza che contiene quell'aereo.", "Descrizione / Effetto (EN)": "Deploy a German airplane in a land space; then you may attack a water space with a force containing that airplane.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Task Force Occidentale", "Nome Carta (EN)": "Western Task Force", "Descrizione / Effetto (IT)": "Schiera una flotta USA insieme a una fanteria trasportata; poi muovi quella fanteria o attacca con una forza contenente uno dei due pezzi.", "Descrizione / Effetto (EN)": "Deploy a USA fleet together with a transported infantry; then move that infantry or attack with a force containing either piece.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Armistizio di Cassabile", "Nome Carta (EN)": "Armistice of Cassibile", "Descrizione / Effetto (IT)": "Se 4 o più pezzi Alleati sono in spazi terrestri adiacenti a Roma o Napoli: guadagna 1 Punto Vittoria e pesca 2 carte.", "Descrizione / Effetto (EN)": "If 4 or more Allies pieces are in land spaces adjacent to Rome or Naples: Gain 1 VP and draw 2 cards.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "1ª Aviotrasportata Britannica", "Nome Carta (EN)": "British 1st Airborne", "Descrizione / Effetto (IT)": "Recluta una fanteria Britannica entro 2 spazi da un aereo Britannico; poi svolgi un'altra azione.", "Descrizione / Effetto (EN)": "Recruit a UK infantry within 2 spaces of a UK airplane; then take another action.", "Reazione (IT)": "ANTI-AEREA", "Reazione (EN)": "Anti-Air"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "M-4 Sherman", "Nome Carta (EN)": "M-4 Sherman", "Descrizione / Effetto (IT)": "Schiera un carro Statunitense o Britannico, poi effettua un'altra azione.", "Descrizione / Effetto (EN)": "Deploy a USA tank; then take another action.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Marina co-belligerante", "Nome Carta (EN)": "Co-Belligerent Navy", "Descrizione / Effetto (IT)": "Se 4 o più pezzi Alleati sono in caselle di terra adiacenti a Roma o Napoli, l'Asse deve eliminare una flotta o una portaerei del Patto; poi esegue un'altra azione.", "Descrizione / Effetto (EN)": "If 4 or more Allies pieces are in land spaces adjacent to Rome or Naples: the Axis must eliminate a Pact fleet or carrier; then take another action.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Settima Armata Statunitense", "Nome Carta (EN)": "United States Seventh Army", "Descrizione / Effetto (IT)": "Schiera un carro armato Statunitense; poi muovi quel carro armato o attacca con una forza che lo contenga.", "Descrizione / Effetto (EN)": "Deploy a USA tank; then move that tank or attack with a force containing that tank.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "M-5 Stuart", "Nome Carta (EN)": "M-5 Stuart", "Descrizione / Effetto (IT)": "Attacca con una forza Statunitense o Britannica contenente un carro armato; poi effettua un'altra azione.", "Descrizione / Effetto (EN)": "Attack with a USA or UK force containing a tank; then take another action.", "Reazione (IT)": "SOSTIENI ATTACCO No Turni Invernali", "Reazione (EN)": "Sustain Attack"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Task Force Orientale", "Nome Carta (EN)": "Eastern Task Force", "Descrizione / Effetto (IT)": "Schiera una flotta UK insieme a una fanteria trasportata; poi muovi quella fanteria o attacca con una forza contenente uno dei due pezzi.", "Descrizione / Effetto (EN)": "Deploy a UK fleet together with a transported infantry; then move that infantry or attack with a force containing either piece.", "Reazione (IT)": "COMBATTIMENTO NAVALE", "Reazione (EN)": "Naval Combat"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Quartier Generale delle Forze Alleate", "Nome Carta (EN)": "Allied Forces Headquarters", "Descrizione / Effetto (IT)": "Pesca 2 carte; muovi un pezzo Statunitense o Britannico; poi effettua un'altra azione.", "Descrizione / Effetto (EN)": "Draw 2 cards; move a USA or UK piece; then take another action.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "USA", "Fase (Beginners/Early/Late)": "Tardivo", "Nome Carta (IT)": "Giacimento Petrolifero di Dhahran", "Nome Carta (EN)": "Dhahran Oil Field", "Descrizione / Effetto (IT)": "Se gli Alleati controllano tutte le caselle di terra entro 2 caselle dall'Arabia: Guadagna 1 PV e posiziona il segnalino Stella della Vittoria dell'Arabia sull'Arabia.", "Descrizione / Effetto (EN)": "If the Allies control all land spaces within 2 spaces of Arabia: Gain 1 VP and place the Arabia Victory Star marker on Arabia.", "Reazione (IT)": "AVANZARE! No Turni Primaverili", "Reazione (EN)": "Advance!"}, {"Fazione": "UK", "Fase (Beginners/Early/Late)": "Intermedio", "Nome Carta (IT)": "Operazione Sabine", "Nome Carta (EN)": "Operation Sabine", "Descrizione / Effetto (IT)": "Schiera una fanteria o un aeroplano UK adiacente all'Iraq; poi una forza UK contenente quella fanteria, o nella stessa casella di quell'aeroplano, può attaccare una casella di terra.", "Descrizione / Effetto (EN)": "Deploy a UK infantry or airplane adjacent to Iraq; then a UK force containing that infantry, or in the same space as that airplane, may attack a land space.", "Reazione (IT)": "SCAMBIO", "Reazione (EN)": "Exchange"}], "contingency": [{"Carta Fisica": "Asse - Carta 1", "Lato": "Lato 1", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "La Bulgaria Firma il Patto", "Nome Carta (EN)": "Bulgaria Signs Pact", "Descrizione / Effetto (IT)": "Attiva la Bulgaria per l'Asse, se possibile; poi puoi reclutare una fanteria Tedesca lì. Posiziona il segnalino Bandiere Rifornimento della Bulgaria in Bulgaria.", "Descrizione / Effetto (EN)": "Activate Bulgaria for the Axis, if possible. Then you may recruit a German infantry there; then you may recruit a German infantry there. Place the Bulgary Supply Flags marker in Bulgaria.", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "Asse - Carta 1", "Lato": "Lato 2", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "La Bulgaria occupa la Tracia e la Macedonia", "Nome Carta (EN)": "Bulgaria Occupies Thrace and Macedonia", "Descrizione / Effetto (IT)": "Elimina un segnalino di una Forza di un Paese Minore in Bulgaria per schierarvi una fanteria del Patto; poi fai un'altra azione.", "Descrizione / Effetto (EN)": "Eliminate a Minor Force Counter in Bulgaria to deploy a Pact infantry there then take another action", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "Asse - Carta 2", "Lato": "Lato 1", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "Linea Gustav", "Nome Carta (EN)": "Gustav Line", "Descrizione / Effetto (IT)": "Schiera una fanteria del Patto o Tedesca a Roma o Napoli.", "Descrizione / Effetto (EN)": "Deploy a Pact or German infantry in Rome or Naples. ", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "Asse - Carta 2", "Lato": "Lato 2", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "Contrattacco di Anzio", "Nome Carta (EN)": "Counterattack on Anzio", "Descrizione / Effetto (IT)": "Gli Alleati devono eliminare un pezzo a Roma o Napoli.", "Descrizione / Effetto (EN)": "The Allies must eliminate a piece in Rome or Naples", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "Asse - Carta 3", "Lato": "Lato 1", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "Convoglio Notturno", "Nome Carta (EN)": "Night Convoy", "Descrizione / Effetto (IT)": "Gli Alleati guadagnano 1 PV. I pezzi dell'Asse in caselle di Clima Desertico sono riforniti fino all'inizio del tuo prossimo turno. Esegui un'altra azione.", "Descrizione / Effetto (EN)": "The Allies gain 1 VP. Axis pieces in Desert Climate spaces are supplied until the start of your next turn. Take another action. ", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "Asse - Carta 3", "Lato": "Lato 2", "Fazione": "Patto", "Fase": "Contingenza", "Nome Carta (IT)": "Scorte di Rifornimento", "Nome Carta (EN)": "Supply Reserves", "Descrizione / Effetto (IT)": "Scarta 2 carte oppure gli Alleati guadagnano 1 PV. Un pezzo dell'Asse a tua scelta è rifornito fino all'inizio del tuo prossimo turno. Esegui un'altra azione.", "Descrizione / Effetto (EN)": "Discard 2 cards or the Allies gain 1 VP. An Axis piece of your choice is supplied until the start of your next turn. Take another action.", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 1", "Lato": "Lato 1", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Forza di Spedizione", "Nome Carta (EN)": "Expeditionary Force", "Descrizione / Effetto (IT)": "Scarta 1 carta oppure l'Asse guadagna 1 PV. Schiera una fanteria UK; poi puoi scartare 1 carta per eseguire un'altra azione.", "Descrizione / Effetto (EN)": "Discard 1 card or the Axis gain 1 VP. Deploy a UK infantry ; then you may discard 1 card to take another action.", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 1", "Lato": "Lato 2", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Nazionalisti Regolari", "Nome Carta (EN)": "Nationalist Regulars", "Descrizione / Effetto (IT)": "Elimina un segnalino Forza di Paese Minore controllato dagli Alleati per schierare una fanteria UK in quella casella; poi esegui un'altra azione.", "Descrizione / Effetto (EN)": "Eliminate an Allies-controlled Minor Country Force counter to deploy a UK infantry in that space; then take another action. ", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 2", "Lato": "Lato 1", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Razionamento", "Nome Carta (EN)": "Rationing", "Descrizione / Effetto (IT)": "L'Asse guadagna 1 punto Vittoria. Pesca 2 carte; poi, se è la Primavera del 1942 o dopo, effettua un'altra azione.", "Descrizione / Effetto (EN)": "The Axis gain 1 VP. Draw 2 cards; then, if it is Spring 1942 or later, take another action.", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 2", "Lato": "Lato 2", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Aiuto Canadese", "Nome Carta (EN)": "Canadian Aid", "Descrizione / Effetto (IT)": "Pesca 1 carta; poi svolgi un'altra azione.", "Descrizione / Effetto (EN)": "Draw 1 card; then take another action. ", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 3", "Lato": "Lato 1", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Task Force Deviata", "Nome Carta (EN)": "Task Force Diverted", "Descrizione / Effetto (IT)": "L'Asse guadagna 2 PV. Elimina un pezzo dell'Asse nell'Atlantico Meridionale o nel Mar Rosso.", "Descrizione / Effetto (EN)": "The Axis gain 2 VP. Eliminate an Axis piece in either South Atlantic or Red Sea. ", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}, {"Carta Fisica": "UK - Carta 3", "Lato": "Lato 2", "Fazione": "UK", "Fase": "Contingenza", "Nome Carta (IT)": "Disordini Coloniali Soppressi", "Nome Carta (EN)": "Colonial Unrest Suppression", "Descrizione / Effetto (IT)": "Elimina una flotta britannica per ottenere 1 Punto Vittoria.", "Descrizione / Effetto (EN)": "Eliminate a UK fleet to gain 1 VP", "Reazione (IT)": "Nessuna", "Reazione (EN)": "-"}]};
+
+        let currentFaction = 'Asse';
+        let includeLateWar = false;
+        let currentFilter = 'all';
+        let opponentHandSize = 5;
+        let blindDiscards = 0;
+        let isContingencyCollapsed = JSON.parse(localStorage.getItem('qmg_cont_collapsed')) || false;
+        let state = JSON.parse(localStorage.getItem('qmg_tracker_state_v15')) || {};
+
+        function getFactionFlag(faction) {
+            if (faction === 'UK') return '🇬🇧 UK';
+            if (faction === 'USA') return '🇺🇸 USA';
+            if (faction === 'Francia') return '🇫🇷 France';
+            if (faction === 'Germania') return '🇩🇪 Germany';
+            if (faction === 'Patto') return '🇮🇹 Pact';
+            return faction;
+        }
+
+        function getFactionClass(faction) {
+            if (faction === 'UK') return 'uk';
+            if (faction === 'USA') return 'usa';
+            if (faction === 'Francia') return 'francia';
+            if (faction === 'Germania') return 'germania';
+            if (faction === 'Patto') return 'patto';
+            return '';
+        }
+
+        function getFactionHeaderLabel(faction) {
+            if (faction === 'UK') return '🇬🇧 UNITED KINGDOM (UK)';
+            if (faction === 'USA') return '🇺🇸 UNITED STATES (USA)';
+            if (faction === 'Francia') return '🇫🇷 FREE FRANCE';
+            if (faction === 'Germania') return '🇩🇪 GERMANY';
+            if (faction === 'Patto') return '🇮🇹 PACT (Italy)';
+            return faction;
+        }
+
+        function getPhaseDisplayLabel(phase) {
+            if (phase === 'Prima partita') return 'FIRST GAME';
+            if (phase === 'Intermedio') return 'MID WAR';
+            if (phase === 'Tardivo') return 'LATE WAR';
+            return phase;
+        }
+
+        function saveState() {
+            localStorage.setItem('qmg_tracker_state_v15', JSON.stringify(state));
+            localStorage.setItem('qmg_cont_collapsed', JSON.stringify(isContingencyCollapsed));
+        }
+
+        function toggleContingencyBox() {
+            isContingencyCollapsed = !isContingencyCollapsed;
+            saveState();
+            renderContingencyState();
+        }
+
+        function renderContingencyState() {
+            const area = document.getElementById('contingency-content-area');
+            const btn = document.getElementById('cont-collapse-btn');
+
+            if (isContingencyCollapsed) {
+                area.classList.add('collapsed');
+                btn.innerText = "▶ Show Contingency Cards";
+            } else {
+                area.classList.remove('collapsed');
+                btn.innerText = "▼ Hide";
+            }
+        }
+
+        function getReactionIcon(reaction) {
+            if (!reaction || reaction === 'Nessuna' || reaction === '-') return '⚪';
+            if (reaction.includes('AVANZARE') || reaction.includes('Advance')) return '⏩';
+            if (reaction.includes('SOSTIENI') || reaction.includes('Sustain')) return '🎯';
+            if (reaction.includes('TIENI DURO') || reaction.includes('Stand Fast')) return '🛡️';
+            if (reaction.includes('ANTI-AEREA') || reaction.includes('Anti-Air')) return '✈️';
+            if (reaction.includes('NAVALE') || reaction.includes('Naval Combat')) return '⚓';
+            if (reaction.includes('SCAMBIO') || reaction.includes('Exchange')) return '⚔️';
+            if (reaction.includes('RITIRATA') || reaction.includes('Retreat')) return '↩️';
+            if (reaction.includes('RITIRO DELLA MARINA') || reaction.includes('Withdraw Navy')) return '🏳️';
+            return '⚡';
+        }
+
+        function adjustHandSize(delta) {
+            opponentHandSize = Math.max(0, Math.min(12, opponentHandSize + delta));
+            document.getElementById('hand-size-input').value = opponentHandSize;
+            render();
+        }
+
+        function onHandSizeChange() {
+            const val = parseInt(document.getElementById('hand-size-input').value);
+            if (!isNaN(val)) {
+                opponentHandSize = Math.max(0, Math.min(12, val));
+            }
+            render();
+        }
+
+        function adjustBlindDiscards(delta) {
+            blindDiscards = Math.max(0, Math.min(30, blindDiscards + delta));
+            document.getElementById('blind-input').value = blindDiscards;
+            render();
+        }
+
+        function onBlindChange() {
+            const val = parseInt(document.getElementById('blind-input').value);
+            if (!isNaN(val)) {
+                blindDiscards = Math.max(0, Math.min(30, val));
+            }
+            render();
+        }
+
+        /* Hypergeometric Probability */
+        function calcHandProbability(N_pool, K, H) {
+            if (N_pool <= 0 || K <= 0 || H <= 0) return 0;
+            if (N_pool <= H) return 100;
+            if (N_pool - K < H) return 100;
+
+            let pNo = 1.0;
+            for (let i = 0; i < H; i++) {
+                pNo *= (N_pool - K - i) / (N_pool - i);
+            }
+            let pAtLeastOne = (1.0 - pNo) * 100;
+            return Math.min(100, Math.max(0, pAtLeastOne));
+        }
+
+        function setFaction(faction) {
+            currentFaction = faction;
+            document.getElementById('btn-axis').classList.toggle('active', faction === 'Asse');
+            document.getElementById('btn-allies').classList.toggle('active', faction === 'Alleati');
+            render();
+        }
+
+        function toggleLateWar(val) {
+            includeLateWar = val;
+            document.getElementById('btn-late-off').classList.toggle('active', !val);
+            document.getElementById('btn-late-on').classList.toggle('active', val);
+            document.getElementById('phase-badge').innerText = val ? 'Late War' : 'Mid War';
+            document.getElementById('phase-badge').style.color = val ? '#b91c1c' : '#16a34a';
+            render();
+        }
+
+        function handleCardToggle(cardName, isLateLocked) {
+            if (isLateLocked && !includeLateWar && !state[cardName]) {
+                if (confirm("This card belongs to Late War and is currently locked.\n\nDo you want to enable '2. + Late War' mode and mark this card as used?")) {
+                    toggleLateWar(true);
+                    toggleCard(cardName);
+                }
+                return;
+            }
+            toggleCard(cardName);
+        }
+
+        function toggleCard(cardName) {
+            state[cardName] = !state[cardName];
+            saveState();
+            render();
+        }
+
+        function resetCurrentFaction() {
+            if (confirm("Reset " + currentFaction + "?")) {
+                const targetFactions = currentFaction === 'Asse' ? ['Patto', 'Germania'] : ['UK', 'USA', 'Francia'];
+                rawData.deck.forEach(c => {
+                    if (targetFactions.includes(c['Fazione'])) state[c['Nome Carta (IT)']] = false;
+                });
+                rawData.contingency.forEach(c => {
+                    if (targetFactions.includes(c['Fazione'])) state[c['Nome Carta (IT)']] = false;
+                });
+                blindDiscards = 0;
+                document.getElementById('blind-input').value = 0;
+                saveState();
+                render();
+            }
+        }
+
+        function setFilter(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.filters .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render();
+        }
+
+        function render() {
+            const targetFactions = currentFaction === 'Asse' ? ['Patto', 'Germania'] : ['UK', 'USA', 'Francia'];
+
+            // 1. Deck Logic & Remaining Calculation
+            const deckList = rawData.deck.filter(c => targetFactions.includes(c['Fazione']));
+            let activePool = deckList.filter(c => includeLateWar || c['Fase (Beginners/Early/Late)'] !== 'Tardivo');
+
+            let totalActiveInPool = activePool.length;
+            let totalRevealedPlayed = activePool.filter(c => !!state[c['Nome Carta (IT)']]).length;
+            
+            let unknownPool = Math.max(0, totalActiveInPool - totalRevealedPlayed - blindDiscards);
+            let drawDeckRemaining = Math.max(0, unknownPool - opponentHandSize);
+
+            document.getElementById('deck-remaining').innerText = `${drawDeckRemaining} cards`;
+            
+            document.getElementById('deck-sub-breakdown').innerHTML = 
+                `Unknown pool: <b>${unknownPool}</b> (Hand: ${opponentHandSize} | Deck: ${drawDeckRemaining})`;
+
+            const effectiveHandSize = Math.min(opponentHandSize, unknownPool);
+
+            // 2. Reaction Analysis
+            const factionReactions = {};
+
+            targetFactions.forEach(f => {
+                factionReactions[f] = { counts: {}, territories: {} };
+            });
+
+            activePool.forEach(c => {
+                const isPlayed = !!state[c['Nome Carta (IT)']];
+                if (!isPlayed) {
+                    const faction = c['Fazione'];
+                    const reactEN = c['Reazione (EN)'] || '-';
+
+                    if (reactEN !== '-' && reactEN !== '') {
+                        let key = reactEN;
+                        if (reactEN.includes('Stand Fast')) {
+                            key = 'Stand Fast';
+                            if (!factionReactions[faction].territories[key]) factionReactions[faction].territories[key] = [];
+                            const terr = reactEN.replace('Stand Fast (', '').replace(')', '');
+                            factionReactions[faction].territories[key].push(terr);
+                        }
+
+                        const counts = factionReactions[faction].counts;
+                        counts[key] = (counts[key] || 0) + 1;
+                    }
+                }
+            });
+
+            const statsList = document.getElementById('reaction-stats-list');
+            statsList.innerHTML = '';
+
+            let hasAnyReactionsLeft = false;
+
+            targetFactions.forEach(f => {
+                const countsObj = factionReactions[f].counts;
+                const terrObj = factionReactions[f].territories;
+                const reactKeys = Object.keys(countsObj);
+
+                if (reactKeys.length > 0) {
+                    hasAnyReactionsLeft = true;
+                    const fGroupEl = document.createElement('div');
+                    fGroupEl.className = `faction-reaction-group ${getFactionClass(f)}`;
+                    
+                    const groupTitleEl = document.createElement('div');
+                    groupTitleEl.className = 'faction-group-title';
+                    groupTitleEl.innerText = getFactionHeaderLabel(f);
+                    fGroupEl.appendChild(groupTitleEl);
+
+                    const sorted = reactKeys.map(rKey => {
+                        const count = countsObj[rKey];
+                        const prob = calcHandProbability(unknownPool, count, effectiveHandSize);
+                        return { key: rKey, count: count, prob: prob };
+                    }).sort((a, b) => b.prob - a.prob);
+
+                    sorted.forEach(item => {
+                        const pVal = item.prob;
+                        let probClass = 'prob-low';
+                        if (pVal >= 60) { probClass = 'prob-high'; }
+                        else if (pVal >= 30) { probClass = 'prob-med'; }
+
+                        let terrNote = '';
+                        if (item.key.includes('Stand Fast') && terrObj[item.key]) {
+                            terrNote = `<div class="terr-inline">📍 Locations: ${terrObj[item.key].join(', ')}</div>`;
+                        }
+
+                        const rRow = document.createElement('div');
+                        rRow.className = 'reaction-row-compact';
+                        rRow.innerHTML = `
+                            <div>
+                                <div class="reaction-row-left">
+                                    <span>${getReactionIcon(item.key)} ${item.key}</span>
+                                    <span style="color:var(--text-muted); font-size:0.7rem;">(${item.count})</span>
+                                </div>
+                                ${terrNote}
+                            </div>
+                            <span class="prob-badge ${probClass}">${pVal.toFixed(0)}%</span>
+                        `;
+                        fGroupEl.appendChild(rRow);
+                    });
+
+                    statsList.appendChild(fGroupEl);
+                }
+            });
+
+            if (!hasAnyReactionsLeft) {
+                statsList.innerHTML = `<div style="color:var(--text-muted); font-size:0.82rem;">No reactions remaining!</div>`;
+            }
+
+            // 3. Render Main Card Grid
+            const mainGrid = document.getElementById('main-card-grid');
+            mainGrid.innerHTML = '';
+
+            let filteredDeck = deckList.filter(c => {
+                const isPlayed = !!state[c['Nome Carta (IT)']];
+                if (currentFilter === 'deck') return !isPlayed && (includeLateWar || c['Fase (Beginners/Early/Late)'] !== 'Tardivo');
+                if (currentFilter === 'played') return isPlayed;
+                if (currentFilter === 'Prima partita' || currentFilter === 'Intermedio' || currentFilter === 'Tardivo') {
+                    return c['Fase (Beginners/Early/Late)'] === currentFilter;
+                }
+                return true;
+            });
+
+            filteredDeck.sort((a, b) => {
+                const aPlayed = !!state[a['Nome Carta (IT)']];
+                const bPlayed = !!state[b['Nome Carta (IT)']];
+                if (aPlayed !== bPlayed) return aPlayed ? 1 : -1;
+
+                const aLocked = !includeLateWar && a['Fase (Beginners/Early/Late)'] === 'Tardivo';
+                const bLocked = !includeLateWar && b['Fase (Beginners/Early/Late)'] === 'Tardivo';
+                if (aLocked !== bLocked) return aLocked ? 1 : -1;
+
+                return 0;
+            });
+
+            filteredDeck.forEach(c => {
+                const isPlayed = !!state[c['Nome Carta (IT)']];
+                const isLateLocked = !includeLateWar && c['Fase (Beginners/Early/Late)'] === 'Tardivo';
+                const phase = c['Fase (Beginners/Early/Late)'];
+                let phaseClass = 'phase-intermedio';
+                if (phase === 'Prima partita') phaseClass = 'phase-prima';
+                if (phase === 'Tardivo') phaseClass = 'phase-tardivo';
+
+                const titlePrimary = c['Nome Carta (EN)'] || c['Nome Carta (IT)'];
+                const descText = c['Descrizione / Effetto (EN)'] || c['Descrizione / Effetto (IT)'];
+                const reactText = c['Reazione (EN)'] || 'None';
+
+                const lockBadgeHtml = isLateLocked ? `<span class="lock-badge">🔒 LOCKED (Late War)</span>` : '';
+
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-item ${getFactionClass(c['Fazione'])} ${isPlayed ? 'played' : ''} ${isLateLocked ? 'late-locked' : ''}`;
+                cardEl.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${titlePrimary}</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+                            ${lockBadgeHtml}
+                            <span class="card-phase ${phaseClass}">${getPhaseDisplayLabel(phase)}</span>
+                            <span class="faction-flag-badge ${getFactionClass(c['Fazione'])}">${getFactionFlag(c['Fazione'])}</span>
+                        </div>
+                    </div>
+                    <div class="card-text">${descText}</div>
+                    <div class="card-footer">
+                        <span class="reaction-label">
+                            ${getReactionIcon(c['Reazione (EN)'])}${reactText}
+                        </span>
+                        <button class="toggle-btn" onclick="handleCardToggle('${c['Nome Carta (IT)'].replace(/'/g, "\'")}', ${isLateLocked})">
+                            ${isPlayed ? 'Restore' : (isLateLocked ? '🔒 Mark Discarded' : 'Mark Discarded')}
+                        </button>
+                    </div>
+                `;
+                mainGrid.appendChild(cardEl);
+            });
+
+            // 4. Render Contingency Cards
+            const contGrid = document.getElementById('contingency-grid');
+            contGrid.innerHTML = '';
+            const contList = rawData.contingency.filter(c => targetFactions.includes(c['Fazione']));
+
+            contList.sort((a, b) => {
+                const aPlayed = !!state[a['Nome Carta (IT)']];
+                const bPlayed = !!state[b['Nome Carta (IT)']];
+                if (aPlayed === bPlayed) return 0;
+                return aPlayed ? 1 : -1;
+            });
+
+            contList.forEach(c => {
+                const isPlayed = !!state[c['Nome Carta (IT)']];
+                const titlePrimary = c['Nome Carta (EN)'] || c['Nome Carta (IT)'];
+                const descText = c['Descrizione / Effetto (EN)'] || c['Descrizione / Effetto (IT)'];
+
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-item ${getFactionClass(c['Fazione'])} ${isPlayed ? 'played' : ''}`;
+                cardEl.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${titlePrimary}</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+                            <span class="card-phase phase-contingenza">Contingency</span>
+                            <span class="faction-flag-badge ${getFactionClass(c['Fazione'])}">${getFactionFlag(c['Fazione'])} (${c['Carta Fisica']} - ${c['Lato']})</span>
+                        </div>
+                    </div>
+                    <div class="card-text">${descText}</div>
+                    <div class="card-footer">
+                        <span class="reaction-label">${c['Fazione']}</span>
+                        <button class="toggle-btn" onclick="toggleCard('${c['Nome Carta (IT)'].replace(/'/g, "\'")}')">
+                            ${isPlayed ? 'Restore' : 'Mark Used'}
+                        </button>
+                    </div>
+                `;
+                contGrid.appendChild(cardEl);
+            });
+        }
+
+        // Initial setup
+        renderContingencyState();
+        render();
+    </script>
+</body>
+</html>
