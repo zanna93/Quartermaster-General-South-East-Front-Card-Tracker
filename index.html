@@ -555,7 +555,9 @@
             display: flex;
             justify-content: space-between;
             align-items: stretch;
-            min-height: 58px;
+            height: 66px;
+            min-height: 66px;
+            flex: 0 0 66px;
             padding: 7px 8px 7px 10px;
             background: transparent;
             border-bottom: none;
@@ -568,11 +570,12 @@
             min-width: 0;
             color: #fffdf0;
             font-family: "Berringer", "Arial Narrow", "Roboto Condensed", "Liberation Sans Narrow", Arial, sans-serif;
-            font-size: 1.32rem;
+            font-size: 1.45rem;
             font-stretch: condensed;
             font-weight: 400;
             text-transform: uppercase;
             text-shadow: 0 1px 2px rgba(0,0,0,0.78);
+            transform: translateY(4px);
         }
 
         .card-faction-heading > span {
@@ -652,7 +655,8 @@
             justify-content: center;
             writing-mode: vertical-rl;
             transform: rotate(180deg);
-            font-size: 0.56rem;
+            min-height: 0;
+            font-size: 0.46rem;
             padding: 3px;
             border-radius: 1px;
             font-weight: 800;
