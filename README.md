@@ -1,62 +1,27 @@
-# ⚔️ Quartermaster General: South Front — Card Tracker & Predictor
+# QMG South Front - Card Tracker
 
-A lightweight, standalone web application designed as a real-time tactical companion for the two-player wargame **Quartermaster General: South Front** (by Ian Brody / Ares Games).
+An unofficial, browser-based companion for **Quartermaster General: South Front**. It helps players track revealed cards and estimate the chance that the opponent holds a given reaction card.
 
-This tool tracks revealed cards, logs face-down discards, and calculates the exact **hypergeometric probability** of your opponent holding specific reaction cards in hand—grouped strictly by Nation.
+## What it does
 
----
+- Tracks revealed discards, face-down discards, and the opponent's hand size.
+- Calculates live reaction-card probabilities by faction.
+- Filters cards by deck status, war era, reaction, and action type.
+- Keeps separate game states through the table selector.
+- Includes historical Wikipedia links for the cards.
 
-## ✨ Key Features
+## Use it
 
-* **🧮 Invariant Probability Engine**  
-  Accurately calculates real-time hand probabilities based on unrevealed cards and opponent hand size. Face-down discards properly reduce the remaining draw deck without artificially inflating reaction odds.
+Open [index.html](index.html) in a modern browser. No installation, server, or account is required.
 
-* **🎯 Clickable Reaction & Tactical Filters**  
-  * **Reaction Filter**: Click any reaction badge (in the sidebar or on a card) to instantly filter the grid to those reaction cards.
-  * **Action Filters**: Easily filter cards by effect type: 🚀 *Deploy*, ⚔️ *Attack*, 🥾 *Move*, ⚡ *Free Action*, 🏆 *VP*, or ❓ *Conditional*.
+Your game data is stored locally in the browser via `localStorage`, so it stays on your device and can be cleared from the browser settings.
 
-* **🗂️ Multi-Table Dropdown Management**  
-  Switch between multiple saved games using the header dropdown. Quickly create a new game with **`+`** or delete old ones with **`🗑️`**.
+## Technology
 
-* **📖 Historical Wikipedia Links**  
-  Every card features a **`📖 Wiki`** button linking directly to the historical event, operation, or military unit depicted on the card.
+Single-file HTML, CSS, and vanilla JavaScript. No dependencies.
 
-* **🏛️ High-Contrast Nation Palette**  
-  Visual design matching the physical components (**UK**, **USA**, **Free France**, **Pact/Italy**, **Germany**). Germany uses a dark charcoal background with white text for instant visual recognition.
+## Credits and Disclaimer
 
-* **🔒 Era Locks & Contingencies**  
-  Includes Late War locking/prompts, automatic sorting of discarded cards to the bottom, and a collapsible Contingency cards panel.
+Interface by **Gabrieles Zinn**. Special thanks to **korosif**.
 
----
-
-## 🛠️ Quick Start
-
-1. **Select Table & Faction**: Choose or create a **TABLE** from the top dropdown, then select **AXIS** or **ALLIES**.
-2. **Set Hand Size**: Adjust your opponent's current hand size using the green **`OPPONENT HAND SIZE`** counter.
-3. **Track Discards**:
-   * Click **`Mark Discarded`** on revealed cards.
-   * Log unrevealed discards (*Conscription*, *Forced March*) using the purple **`FACE-DOWN DISCARDS`** counter.
-4. **Filter & Inspect**: Click any reaction in the sidebar or use the action buttons (Deploy, Attack, Move, etc.) to isolate specific cards.
-5. **Enable Late War**: Toggle mode to **`2. + Late War`** when Late War cards are shuffled into the deck.
-
----
-
-## 🌐 GitHub Pages Deployment
-
-1. Rename the main HTML file to **`index.html`** in your repository.
-2. In GitHub, go to **Settings ➔ Pages**.
-3. Under **Branch**, select `main` (or `master`) and click **Save**.
-
----
-
-## 📜 Technical Stack
-
-* **Tech**: Pure HTML5, CSS3, Vanilla JavaScript (ES6+).
-* **Persistence**: 100% client-side `LocalStorage` (offline support, zero database required).
-* **Dependencies**: None.
-
----
-
-## ⚖️ Disclaimer
-
-*Quartermaster General: South Front* is designed by Ian Brody and published by Ares Games / Griggling Games. This project is an unofficial fan-made tool created for personal gameplay tracking.
+*Quartermaster General: South Front* was designed by Ian Brody and is published by Ares Games / Griggling Games. This is an unofficial fan-made companion and is not affiliated with or endorsed by the designers or publisher. All game-related names and artwork remain the property of their respective rights holders.
