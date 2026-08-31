@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QMG: South Front - Card Tracker & Predictor</title>
-    <link rel="icon" type="image/svg+xml" href="links/favicon.svg">
+    <link rel="icon" href="links/favicon.ico?v=2" sizes="any">
+    <link rel="icon" type="image/png" sizes="200x200" href="links/favicon.png?v=2">
     <style>
         @font-face {
             font-family: "GaramondPremrPro";
@@ -499,6 +500,8 @@
             --card-art-index: 0;
             position: relative;
             isolation: isolate;
+            width: 90%;
+            justify-self: center;
             min-height: 350px;
             overflow: hidden;
             border-radius: 4px;
@@ -815,7 +818,7 @@
             .faction-tabs { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
             .faction-tabs .btn { width: 100%; min-width: 0; padding: 7px 5px; font-size: 0.72rem; }
             .card-grid { grid-template-columns: minmax(0, 1fr); }
-            .card-item { min-height: 325px; }
+            .card-item { width: 100%; min-height: 325px; }
             .cards-panel { padding: 0; }
         }
 
@@ -1029,7 +1032,7 @@
     </div>
 
     <footer class="app-footer">
-        <span>Companion interface by zanna93.</span>
+        <span>Companion interface by Gabrieles Zinn. Special thanks to korosif.</span>
         <span title="Unofficial fan-made tool. Quartermaster General: South Front and its artwork are the property of their respective rights holders. Not affiliated with or endorsed by the game's designers or publisher.">Unofficial fan-made tool. Quartermaster General: South Front and its artwork are property of their respective rights holders. Not affiliated with or endorsed by the publisher.</span>
     </footer>
 
