@@ -937,9 +937,9 @@
                 </div>
             </div>
 
-            <!-- Dynamic Opponent Hand Size Input -->
+            <!-- Dynamic Faction Hand Size Input -->
             <div class="counter-box hand">
-                <div class="stat-title">OPPONENT HAND SIZE</div>
+                <div class="stat-title" id="hand-size-title">AXIS HAND SIZE</div>
                 <div class="counter-control">
                     <button class="counter-btn" onclick="adjustHandSize(-1)">-</button>
                     <input type="number" id="hand-size-input" class="counter-input green" value="5" min="0" max="12" onchange="onHandSizeChange()">
@@ -1068,7 +1068,6 @@
         let includeLateWar = false;
         let currentFilter = 'all';
         let selectedReactionFilter = null; // Can store a specific reaction name
-        let opponentHandSize = 5;
         let isContingencyCollapsed = JSON.parse(localStorage.getItem('qmg_cont_collapsed')) || false;
         
         function getTableStorageKey(tableId) {
@@ -1081,6 +1080,18 @@
             const meta = state.__qmgTracker || {};
             const byFaction = meta.blindDiscards || {};
             return Math.max(0, Math.min(30, Number(byFaction[currentFaction]) || 0));
+        }
+
+        function getFactionHandSize() {
+            const meta = state.__qmgTracker || {};
+            const byFaction = meta.handSizes || {};
+            return Math.max(0, Math.min(12, Number(byFaction[currentFaction]) || 5));
+        }
+
+        function setFactionHandSize(value) {
+            state.__qmgTracker = state.__qmgTracker || {};
+            state.__qmgTracker.handSizes = state.__qmgTracker.handSizes || {};
+            state.__qmgTracker.handSizes[currentFaction] = Math.max(0, Math.min(12, value));
         }
 
         function setFactionBlindDiscards(value) {
@@ -1328,15 +1339,18 @@
         }
 
         function adjustHandSize(delta) {
-            opponentHandSize = Math.max(0, Math.min(12, opponentHandSize + delta));
-            document.getElementById('hand-size-input').value = opponentHandSize;
+            const handSize = Math.max(0, Math.min(12, getFactionHandSize() + delta));
+            setFactionHandSize(handSize);
+            document.getElementById('hand-size-input').value = handSize;
+            saveState();
             render();
         }
 
         function onHandSizeChange() {
             const val = parseInt(document.getElementById('hand-size-input').value);
             if (!isNaN(val)) {
-                opponentHandSize = Math.max(0, Math.min(12, val));
+                setFactionHandSize(val);
+                saveState();
             }
             render();
         }
@@ -1414,6 +1428,8 @@
                 rawData.contingency.forEach(c => {
                     if (targetFactions.includes(c['Fazione'])) state[c['Nome Carta (IT)']] = false;
                 });
+                setFactionHandSize(5);
+                document.getElementById('hand-size-input').value = 5;
                 setFactionBlindDiscards(0);
                 document.getElementById('blind-input').value = 0;
                 saveState();
@@ -1445,7 +1461,10 @@
 
         function render() {
             const targetFactions = currentFaction === 'Asse' ? ['Patto', 'Germania'] : ['UK', 'USA', 'Francia'];
+            const handSize = getFactionHandSize();
             const blindDiscards = getFactionBlindDiscards();
+            document.getElementById('hand-size-title').innerText = currentFaction === 'Asse' ? 'AXIS HAND SIZE' : 'ALLIES HAND SIZE';
+            document.getElementById('hand-size-input').value = handSize;
             document.getElementById('blind-input').value = blindDiscards;
 
             // Update Active Reaction Pill Box
@@ -1464,13 +1483,13 @@
             let totalRevealedPlayed = activePool.filter(c => !!state[c['Nome Carta (IT)']]).length;
             
             let unrevealedPool = Math.max(0, totalActiveInPool - totalRevealedPlayed);
-            let effectiveHandSize = Math.min(opponentHandSize, unrevealedPool);
+            let effectiveHandSize = Math.min(handSize, unrevealedPool);
             let drawDeckRemaining = Math.max(0, unrevealedPool - effectiveHandSize - blindDiscards);
 
             document.getElementById('deck-remaining').innerText = `${drawDeckRemaining} cards`;
             
             document.getElementById('deck-sub-breakdown').innerHTML = 
-                `Unrevealed cards: <b>${unrevealedPool}</b> (Hand: ${opponentHandSize} | Deck: ${drawDeckRemaining} | Face-down: ${blindDiscards})`;
+                `Unrevealed cards: <b>${unrevealedPool}</b> (Hand: ${handSize} | Deck: ${drawDeckRemaining} | Face-down: ${blindDiscards})`;
 
             // 2. Reaction Analysis
             const factionReactions = {};
