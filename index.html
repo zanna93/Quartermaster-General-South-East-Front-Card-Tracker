@@ -1163,14 +1163,97 @@
             return '';
         }
 
-        function getCardArtIndex(cardKey) {
-            let hash = 0;
-            const key = String(cardKey || '');
-            for (let i = 0; i < key.length; i++) {
-                hash = ((hash << 5) - hash) + key.charCodeAt(i);
-                hash |= 0;
-            }
-            return Math.abs(hash) % 5;
+        const cardBackgroundTypes = {
+            'Commando Supremo': 'generali',
+            'Greco-Italian War': 'soldati',
+            'Rommel Strikes!': 'carri armati',
+            'Aquila Completed': 'sottomarino',
+            'Decima Flottiglia MAS': 'sottomarino',
+            'Golden Square Coup': 'generali',
+            'Italy Occupies British Somaliland': 'soldati',
+            'Luftflotte 2': 'aereo',
+            'Britain Supports Greece': 'generali',
+            'Operation Compass': 'carri armati',
+            'Desert Rats': 'carri armati',
+            'HMS Illustrious': 'sottomarino',
+            'Cash and Carry': 'generali',
+            'Rock of Gibraltar': 'soldati',
+            'Billion Dollar Gift': 'generali',
+            'ANZAC Reinforcements': 'soldati',
+            'Regia Marina': 'sottomarino',
+            'Operation 25': 'carri armati',
+            'King Peter Comes of Age': 'generali',
+            'Convoy Raiders': 'sottomarino',
+            'Regia Aeronautica': 'aereo',
+            'Fallschirmjäger': 'soldati',
+            'Battle of Gondar': 'soldati',
+            'British Eighth Army': 'soldati',
+            'Operation Herkules': 'soldati',
+            'Libyan Divisions': 'soldati',
+            'Neutrality Patrols': 'sottomarino',
+            'Mediterranean Station': 'sottomarino',
+            'SM.79 Sparviero': 'aereo',
+            'Jagdgeschwader 27': 'aereo',
+            'Faith, Hope & Charity': 'aereo',
+            'Mers-el-Kébir': 'sottomarino',
+            'L3/35 Tankette': 'carri armati',
+            'Afrika Korps': 'carri armati',
+            'French Foreign Legion': 'soldati',
+            'Swordfish Night Attack': 'aereo',
+            'Axis Seize Vichy Navy': 'sottomarino',
+            'Panzer Army Africa': 'carri armati',
+            'Unsinkable Carrier': 'sottomarino',
+            'Union Defense Force': 'soldati',
+            'Government of National Salvation': 'generali',
+            'Monte Cassino': 'soldati',
+            'Géo Gras Group': 'soldati',
+            'B-25 Mitchell': 'aereo',
+            'Vichy Colonial Support': 'generali',
+            'Luftwaffe Field Divisions': 'soldati',
+            'Operation Torch': 'carri armati',
+            'Ethniki Antistasi': 'soldati',
+            'Bazookas': 'soldati',
+            'National Republican Army': 'soldati',
+            'Impero Italiano': 'generali',
+            'P-51 Mustang': 'aereo',
+            'Casablanca Conference': 'generali',
+            'Mare Nostrum': 'sottomarino',
+            'Air Raid on Bari': 'aereo',
+            'Western Task Force': 'sottomarino',
+            'Armistice of Cassibile': 'generali',
+            'British 1st Airborne': 'soldati',
+            'M-4 Sherman': 'carri armati',
+            'Co-Belligerent Navy': 'sottomarino',
+            'United States Seventh Army': 'carri armati',
+            'M-5 Stuart': 'carri armati',
+            'Eastern Task Force': 'sottomarino',
+            'Allied Forces Headquarters': 'generali',
+            'Dhahran Oil Field': 'generali',
+            'Operation Sabine': 'soldati',
+            'Bulgaria Signs Pact': 'generali',
+            'Bulgaria Occupies Thrace and Macedonia': 'soldati',
+            'Gustav Line': 'soldati',
+            'Counterattack on Anzio': 'soldati',
+            'Night Convoy': 'sottomarino',
+            'Supply Reserves': 'generali',
+            'Expeditionary Force': 'soldati',
+            'Nationalist Regulars': 'soldati',
+            'Rationing': 'generali',
+            'Canadian Aid': 'generali',
+            'Task Force Diverted': 'sottomarino',
+            'Colonial Unrest Suppression': 'sottomarino'
+        };
+
+        const cardArtIndexes = {
+            aereo: 0,
+            generali: 1,
+            soldati: 2,
+            sottomarino: 3,
+            'carri armati': 4
+        };
+
+        function getCardArtIndex(cardName) {
+            return cardArtIndexes[cardBackgroundTypes[cardName]] ?? 0;
         }
 
         function getFactionHeaderLabel(faction) {
@@ -1556,7 +1639,7 @@
 
                 const cardEl = document.createElement('div');
                 cardEl.className = `card-item ${getFactionClass(c['Fazione'])} ${isPlayed ? 'played' : ''} ${isLateLocked ? 'late-locked' : ''}`;
-                cardEl.style.setProperty('--card-art-index', getCardArtIndex(c['Nome Carta (IT)']));
+                cardEl.style.setProperty('--card-art-index', getCardArtIndex(c['Nome Carta (EN)']));
                 cardEl.innerHTML = `
                     <div class="card-header">
                         <div class="card-faction-heading">
@@ -1606,7 +1689,7 @@
 
                 const cardEl = document.createElement('div');
                 cardEl.className = `card-item ${getFactionClass(c['Fazione'])} ${isPlayed ? 'played' : ''}`;
-                cardEl.style.setProperty('--card-art-index', getCardArtIndex(c['Nome Carta (IT)']));
+                cardEl.style.setProperty('--card-art-index', getCardArtIndex(c['Nome Carta (EN)']));
                 cardEl.innerHTML = `
                     <div class="card-header">
                         <div class="card-faction-heading">
