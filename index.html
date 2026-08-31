@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QMG: South Front - Card Tracker & Predictor</title>
+    <link rel="icon" type="image/svg+xml" href="links/favicon.svg">
     <style>
         @font-face {
             font-family: "GaramondPremrPro";
@@ -564,7 +565,7 @@
             min-width: 0;
             color: #fffdf0;
             font-family: "Berringer", "Arial Narrow", "Roboto Condensed", "Liberation Sans Narrow", Arial, sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.32rem;
             font-stretch: condensed;
             font-weight: 400;
             text-transform: uppercase;
@@ -740,6 +741,18 @@
 
         .reaction-label:hover {
             background: rgba(255,255,255,0.14);
+        }
+
+        .reaction-location {
+            align-self: center;
+            color: #fffdf0;
+            font-family: "GaramondPremrPro", Garamond, Georgia, serif;
+            font-size: 0.62em;
+            font-weight: 600;
+            line-height: 1;
+            margin-left: 2px;
+            text-transform: none;
+            white-space: nowrap;
         }
 
         .reaction-icon {
@@ -1207,6 +1220,12 @@
             return `<img class="reaction-icon" src="links/${match.file}" alt="" aria-hidden="true">`;
         }
 
+        function getReactionLabel(reaction) {
+            const standFast = reaction && reaction.match(/^(Stand Fast)\s*(\([^)]*\))$/i);
+            if (!standFast) return reaction;
+            return `${standFast[1]}<span class="reaction-location">${standFast[2]}</span>`;
+        }
+
         function adjustHandSize(delta) {
             opponentHandSize = Math.max(0, Math.min(12, opponentHandSize + delta));
             document.getElementById('hand-size-input').value = opponentHandSize;
@@ -1534,7 +1553,7 @@
                     </div>
                     <div class="card-footer">
                         <span class="reaction-label" onclick="toggleReactionFilter('${reactText.includes('Stand Fast') ? 'Stand Fast' : reactText}')" title="Filter by this reaction">
-                            ${getReactionIcon(c['Reazione (EN)'])}${reactText}
+                            ${getReactionIcon(c['Reazione (EN)'])}${getReactionLabel(reactText)}
                         </span>
                         <button class="toggle-btn" onclick="handleCardToggle('${c['Nome Carta (IT)'].replace(/'/g, "\'")}', ${isLateLocked})">
                             ${isPlayed ? 'Restore' : (isLateLocked ? '🔒 Mark Discarded' : 'Mark Discarded')}
