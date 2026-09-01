@@ -12,7 +12,7 @@ This is a local proof of concept, not a release feature. It reads only log nodes
 
 ## Test flow
 
-1. In the tracker, click the gold star beside the title five times to reveal **Sync**.
+1. In the tracker, choose South Front or East Front, then click the gold star beside the title five times to reveal **Sync**.
 2. Open Sync, enter the BGA table code, and choose **Connect**.
 3. Play a new action on BGA, then return to the tracker and choose **Refresh**.
 4. Review the detected cards before choosing **Apply changes**.

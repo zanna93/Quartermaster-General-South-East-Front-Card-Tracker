@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "QMG South Front BGA Sync (Experimental)",
+  "name": "QMG Fronts BGA Sync (Experimental)",
   "version": "0.1.0",
-  "description": "Local proof of concept for relaying visible BGA table logs to the QMG South Front tracker.",
+  "description": "Local proof of concept for relaying visible BGA table logs to the QMG Fronts tracker.",
   "permissions": ["storage", "tabs"],
   "host_permissions": [
     "*://*.boardgamearena.com/*",
@@ -27,6 +27,6 @@
     }
   ],
   "action": {
-    "default_title": "QMG South Front BGA Sync (Experimental)"
+    "default_title": "QMG Fronts BGA Sync (Experimental)"
   }
 }
