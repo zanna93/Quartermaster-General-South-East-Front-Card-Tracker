@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "QMG South Front BGA Sync (Experimental)",
+  "version": "0.1.0",
+  "description": "Local proof of concept for relaying visible BGA table logs to the QMG South Front tracker.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "*://*.boardgamearena.com/*",
+    "file:///*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.boardgamearena.com/*"],
+      "js": ["bga-log-observer.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["file:///*", "http://localhost/*", "http://127.0.0.1/*"],
+      "js": ["tracker-bridge.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "QMG South Front BGA Sync (Experimental)"
+  }
+}
