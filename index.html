@@ -91,10 +91,20 @@
             width: 28px;
             height: 28px;
             flex: 0 0 28px;
+            padding: 0;
+            border: 0;
             background-image: url("links/markers.webp");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 28px auto;
+            background-color: transparent;
+            cursor: default;
+            border-radius: 50%;
+        }
+
+        .app-title-emblem:focus-visible {
+            outline: 2px solid #facc15;
+            outline-offset: 2px;
         }
 
         .header-controls {
@@ -486,6 +496,240 @@
             line-height: 1;
         }
 
+        .toolbar-icon-btn {
+            width: 30px;
+            height: 30px;
+            display: inline-grid;
+            place-items: center;
+            padding: 0;
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            background: #f8fafc;
+            color: #1e293b;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .toolbar-icon-btn:hover,
+        .toolbar-icon-btn:focus-visible {
+            background: #e2e8f0;
+            outline: 2px solid #60a5fa;
+            outline-offset: 1px;
+        }
+
+        .card-search-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            min-width: min(290px, 100%);
+        }
+
+        .card-search-control[hidden],
+        .deploy-unit-control[hidden] {
+            display: none;
+        }
+
+        .card-search-input,
+        .deploy-unit-select,
+        .sync-input,
+        .sync-log-input {
+            border: 1px solid #94a3b8;
+            border-radius: 5px;
+            color: #1e293b;
+            background: #ffffff;
+            font: inherit;
+        }
+
+        .card-search-input {
+            width: 100%;
+            min-width: 0;
+            height: 30px;
+            padding: 5px 8px;
+        }
+
+        .card-search-input:focus,
+        .deploy-unit-select:focus,
+        .sync-input:focus,
+        .sync-log-input:focus {
+            outline: 2px solid #60a5fa;
+            outline-offset: 1px;
+        }
+
+        .deploy-unit-control {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .deploy-unit-select {
+            height: 30px;
+            padding: 4px 26px 4px 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        #active-reaction-pill-box {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .sync-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 29px;
+            padding: 4px 8px;
+            border: 1px solid #0f766e;
+            border-radius: 5px;
+            background: #ecfeff;
+            color: #115e59;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .sync-button:hover { background: #cffafe; }
+
+        .sync-button[hidden] { display: none; }
+
+        .experimental-badge {
+            padding: 1px 4px;
+            border-radius: 3px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.58rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .sync-modal-backdrop[hidden] { display: none; }
+
+        .sync-modal-backdrop {
+            position: fixed;
+            z-index: 20;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(15, 23, 42, 0.56);
+        }
+
+        .sync-modal {
+            width: min(640px, 100%);
+            max-height: min(760px, calc(100vh - 36px));
+            overflow: auto;
+            border: 1px solid #64748b;
+            border-radius: 8px;
+            background: #f8fafc;
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.3);
+        }
+
+        .sync-modal-header,
+        .sync-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+        }
+
+        .sync-modal-header {
+            border-bottom: 1px solid #cbd5e1;
+            background: #ecfeff;
+        }
+
+        .sync-modal-title {
+            color: #134e4a;
+            font-size: 0.95rem;
+            font-weight: 800;
+        }
+
+        .sync-modal-body {
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .sync-field {
+            display: grid;
+            gap: 5px;
+        }
+
+        .sync-field label,
+        .sync-reconcile-label {
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .sync-field-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 6px;
+        }
+
+        .sync-input {
+            width: 100%;
+            height: 34px;
+            padding: 6px 8px;
+        }
+
+        .sync-note {
+            color: #475569;
+            font-size: 0.74rem;
+            line-height: 1.4;
+        }
+
+        .sync-status {
+            padding: 8px 9px;
+            border: 1px solid #bae6fd;
+            border-radius: 5px;
+            background: #f0f9ff;
+            color: #0c4a6e;
+            font-size: 0.76rem;
+            line-height: 1.35;
+        }
+
+        .sync-status.error {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .sync-status.success {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .sync-preview[hidden] { display: none; }
+
+        .sync-preview {
+            display: grid;
+            gap: 6px;
+            padding: 10px;
+            border: 1px solid #99f6e4;
+            border-radius: 6px;
+            background: #f0fdfa;
+            color: #134e4a;
+            font-size: 0.78rem;
+        }
+
+        .sync-preview-list {
+            max-height: 130px;
+            overflow: auto;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .sync-modal-footer {
+            justify-content: flex-end;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .sync-modal-footer .btn { min-width: 82px; }
+
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
@@ -824,6 +1068,9 @@
             .card-grid { grid-template-columns: minmax(0, 1fr); }
             .card-item { width: 100%; min-height: 325px; }
             .cards-panel { padding: 0; }
+            .card-search-control { min-width: 0; width: 100%; }
+            .sync-modal-backdrop { padding: 8px; }
+            .sync-modal { max-height: calc(100vh - 16px); }
         }
 
         .app-footer {
@@ -902,7 +1149,7 @@
 <body>
 
     <header>
-        <h1 id="ui-app-title"><span class="app-title-emblem" aria-hidden="true"></span>QMG South Front - Tracker</h1>
+        <h1 id="ui-app-title"><button class="app-title-emblem" id="sync-reveal-toggle" type="button" onclick="registerSyncRevealClick()" title="QMG South Front" aria-label="QMG South Front emblem" aria-controls="bga-sync-toggle" aria-expanded="false"></button>QMG South Front - Tracker</h1>
         <div class="header-controls">
             <!-- Multi-Game Dropdown & Controls -->
             <div style="display:flex; align-items:center; gap:5px; background:#f1f5f9; padding:3px 8px; border-radius:6px; border:1px solid #cbd5e1;">
@@ -911,6 +1158,7 @@
                 </select>
                 <button onclick="createNewTable()" title="Create New Table" style="padding:2px 7px; font-size:0.85rem; font-weight:800; border:1px solid #16a34a; background:#dcfce7; color:#15803d; border-radius:4px; cursor:pointer;">+</button>
                 <button onclick="deleteCurrentTable()" title="Delete Current Table" style="padding:2px 7px; font-size:0.85rem; font-weight:800; border:1px solid #dc2626; background:#fee2e2; color:#b91c1c; border-radius:4px; cursor:pointer;">🗑️</button>
+                <button class="sync-button" id="bga-sync-toggle" type="button" onclick="openBgaSyncDialog()" title="Open experimental BGA sync" hidden><span aria-hidden="true">&#10227;</span><span>Sync</span><span class="experimental-badge">Experimental</span></button>
             </div>
 
             <!-- Faction Selector -->
@@ -992,6 +1240,11 @@
         <div class="cards-panel">
             
             <div class="filters" id="filter-buttons-container">
+                <button class="toolbar-icon-btn" type="button" onclick="toggleCardSearch()" title="Search cards (Ctrl/Cmd + K)" aria-label="Search cards">&#128269;</button>
+                <div class="card-search-control" id="card-search-control" hidden>
+                    <input class="card-search-input" id="card-search-input" type="search" placeholder="Search card name..." autocomplete="off" oninput="onCardSearchInput()" aria-label="Search card name">
+                    <button class="toolbar-icon-btn" type="button" onclick="closeCardSearch()" title="Clear search" aria-label="Clear search">&#215;</button>
+                </div>
                 <button class="filter-btn active" onclick="setFilter('all', this)" id="f-all">All Cards</button>
                 <button class="filter-btn" onclick="setFilter('deck', this)" id="f-deck">In Deck / Probable</button>
                 <button class="filter-btn" onclick="setFilter('played', this)" id="f-played">Discarded Revealed</button>
@@ -1006,6 +1259,16 @@
 
                 <!-- Tactical Action Filters -->
                 <button class="filter-btn action-filter" onclick="setFilter('deploy', this)" id="f-deploy">🚀 Deploy</button>
+                <div class="deploy-unit-control" id="deploy-unit-control" hidden>
+                    <select class="deploy-unit-select" id="deploy-unit-select" onchange="setDeployUnitFilter(this.value)" aria-label="Filter deploy cards by unit">
+                        <option value="all">All units</option>
+                        <option value="infantry">Infantry</option>
+                        <option value="tank">Tanks</option>
+                        <option value="airplane">Airplanes</option>
+                        <option value="fleet">Fleets</option>
+                        <option value="carrier">Carriers</option>
+                    </select>
+                </div>
                 <button class="filter-btn action-filter" onclick="setFilter('attack', this)" id="f-attack">⚔️ Attack</button>
                 <button class="filter-btn action-filter" onclick="setFilter('move', this)" id="f-move">🥾 Move</button>
                 <button class="filter-btn action-filter" onclick="setFilter('free_action', this)" id="f-free">⚡ Free Action</button>
@@ -1033,9 +1296,35 @@
             </div>
 
         </div>
-    </div>
+        </div>
 
-    <footer class="app-footer">
+        <div class="sync-modal-backdrop" id="bga-sync-modal" hidden role="dialog" aria-modal="true" aria-labelledby="bga-sync-title">
+            <div class="sync-modal">
+                <div class="sync-modal-header">
+                    <div class="sync-modal-title" id="bga-sync-title">BGA Sync <span class="experimental-badge">Experimental</span></div>
+                    <button class="toolbar-icon-btn" type="button" onclick="closeBgaSyncDialog()" title="Close sync" aria-label="Close sync">&#215;</button>
+                </div>
+                <div class="sync-modal-body">
+                    <div class="sync-field">
+                        <label for="bga-table-input">BGA table URL or code</label>
+                        <div class="sync-field-row">
+                            <input class="sync-input" id="bga-table-input" type="text" placeholder="905886714 or a BGA table URL" autocomplete="off">
+                            <button class="btn" type="button" onclick="connectBgaSync()">Connect</button>
+                        </div>
+                    </div>
+                    <div class="sync-status" id="bga-sync-status">Checking for the local BGA companion...</div>
+                    <p class="sync-note">Only events observed after connection are candidates for changes. The current BGA log can be incomplete, so it is never used to reconcile or reset cards.</p>
+                    <div class="sync-preview" id="bga-sync-preview" hidden></div>
+                </div>
+                <div class="sync-modal-footer">
+                    <button class="btn" type="button" onclick="closeBgaSyncDialog()">Cancel</button>
+                    <button class="btn" type="button" onclick="refreshBgaSync()">Refresh</button>
+                    <button class="btn" id="bga-apply-button" type="button" onclick="applyBgaSync()" disabled>Apply changes</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
         <span>Companion interface by Gabrieles Zinn. Special thanks to korosif.</span>
         <span title="Unofficial fan-made tool. Quartermaster General: South Front and its artwork are the property of their respective rights holders. Not affiliated with or endorsed by the game's designers or publisher.">Unofficial fan-made tool. Quartermaster General: South Front and its artwork are property of their respective rights holders. Not affiliated with or endorsed by the publisher.</span>
     </footer>
@@ -1067,7 +1356,15 @@
         let currentFaction = 'Asse';
         let includeLateWar = false;
         let currentFilter = 'all';
-        let selectedReactionFilter = null; // Can store a specific reaction name
+        let selectedReactionFilters = [];
+        let cardSearchQuery = '';
+        let deployUnitFilter = 'all';
+        let pendingBgaSync = null;
+        let isSyncControlVisible = false;
+        let syncRevealClicks = 0;
+        let bgaBridgeAvailable = false;
+        let bgaBridgeProbeTimer = null;
+        const BGA_SYNC_CHANNEL = 'qmg-south-front-bga-sync';
         let isContingencyCollapsed = JSON.parse(localStorage.getItem('qmg_cont_collapsed')) || false;
         
         function getTableStorageKey(tableId) {
@@ -1076,28 +1373,33 @@
 
         let state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
 
+        function getTrackerMeta() {
+            state.__qmgTracker = state.__qmgTracker || {};
+            return state.__qmgTracker;
+        }
+
         function getFactionBlindDiscards() {
-            const meta = state.__qmgTracker || {};
+            const meta = getTrackerMeta();
             const byFaction = meta.blindDiscards || {};
             return Math.max(0, Math.min(30, Number(byFaction[currentFaction]) || 0));
         }
 
         function getFactionHandSize() {
-            const meta = state.__qmgTracker || {};
+            const meta = getTrackerMeta();
             const byFaction = meta.handSizes || {};
             return Math.max(0, Math.min(12, Number(byFaction[currentFaction]) || 5));
         }
 
         function setFactionHandSize(value) {
-            state.__qmgTracker = state.__qmgTracker || {};
-            state.__qmgTracker.handSizes = state.__qmgTracker.handSizes || {};
-            state.__qmgTracker.handSizes[currentFaction] = Math.max(0, Math.min(12, value));
+            const meta = getTrackerMeta();
+            meta.handSizes = meta.handSizes || {};
+            meta.handSizes[currentFaction] = Math.max(0, Math.min(12, value));
         }
 
         function setFactionBlindDiscards(value) {
-            state.__qmgTracker = state.__qmgTracker || {};
-            state.__qmgTracker.blindDiscards = state.__qmgTracker.blindDiscards || {};
-            state.__qmgTracker.blindDiscards[currentFaction] = Math.max(0, Math.min(30, value));
+            const meta = getTrackerMeta();
+            meta.blindDiscards = meta.blindDiscards || {};
+            meta.blindDiscards[currentFaction] = Math.max(0, Math.min(30, value));
         }
 
         function renderTableDropdown() {
@@ -1388,6 +1690,7 @@
 
         function setFaction(faction) {
             currentFaction = faction;
+            selectedReactionFilters = [];
             document.getElementById('btn-axis').classList.toggle('active', faction === 'Asse');
             document.getElementById('btn-allies').classList.toggle('active', faction === 'Alleati');
             render();
@@ -1415,6 +1718,8 @@
 
         function toggleCard(cardName) {
             state[cardName] = !state[cardName];
+            const syncMeta = getBgaSyncMeta();
+            delete syncMeta.syncedCards[cardName];
             saveState();
             render();
         }
@@ -1438,26 +1743,382 @@
         }
 
         function setFilter(filter, btn) {
-            selectedReactionFilter = null; // Clear reaction filter if clicking top filter button
+            selectedReactionFilters = [];
             currentFilter = filter;
+            if (filter !== 'deploy') deployUnitFilter = 'all';
             document.querySelectorAll('.filters .filter-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
             render();
         }
 
-        function toggleReactionFilter(reactKey) {
-            if (selectedReactionFilter === reactKey) {
-                selectedReactionFilter = null;
+        function getReactionFilterKey(faction, reaction) {
+            return `${faction}::${reaction}`;
+        }
+
+        function isReactionFilterSelected(faction, reaction) {
+            const key = getReactionFilterKey(faction, reaction);
+            return selectedReactionFilters.some(filter => filter.key === key);
+        }
+
+        function toggleReactionFilter(faction, reaction) {
+            const key = getReactionFilterKey(faction, reaction);
+            const index = selectedReactionFilters.findIndex(filter => filter.key === key);
+            if (index >= 0) {
+                selectedReactionFilters.splice(index, 1);
             } else {
-                selectedReactionFilter = reactKey;
+                selectedReactionFilters.push({ key, faction, reaction });
             }
             render();
         }
 
-        function clearReactionFilter() {
-            selectedReactionFilter = null;
+        function removeReactionFilter(faction, reaction) {
+            const key = getReactionFilterKey(faction, reaction);
+            selectedReactionFilters = selectedReactionFilters.filter(filter => filter.key !== key);
             render();
         }
+
+        function clearReactionFilters() {
+            selectedReactionFilters = [];
+            render();
+        }
+
+        function cardMatchesSelectedReactions(card) {
+            if (selectedReactionFilters.length === 0) return true;
+            const reaction = card['Reazione (EN)'] || '';
+            return selectedReactionFilters.some(filter => filter.faction === card['Fazione'] && reaction.includes(filter.reaction));
+        }
+
+        function normalizeSearchText(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
+        function cardMatchesSearch(card) {
+            const query = normalizeSearchText(cardSearchQuery).trim();
+            if (!query) return true;
+            return [card['Nome Carta (EN)'], card['Nome Carta (IT)']]
+                .some(name => normalizeSearchText(name).includes(query));
+        }
+
+        function toggleCardSearch() {
+            const searchControl = document.getElementById('card-search-control');
+            if (searchControl.hidden) {
+                searchControl.hidden = false;
+                window.setTimeout(() => document.getElementById('card-search-input').focus(), 0);
+                return;
+            }
+            closeCardSearch();
+        }
+
+        function closeCardSearch() {
+            cardSearchQuery = '';
+            const searchControl = document.getElementById('card-search-control');
+            const searchInput = document.getElementById('card-search-input');
+            searchInput.value = '';
+            searchControl.hidden = true;
+            render();
+        }
+
+        function onCardSearchInput() {
+            cardSearchQuery = document.getElementById('card-search-input').value;
+            render();
+        }
+
+        function isDeployCard(card) {
+            const descriptions = [card['Descrizione / Effetto (EN)'], card['Descrizione / Effetto (IT)']]
+                .map(value => normalizeSearchText(value));
+            return descriptions.some(description => /\bdeploy\b|\brecruit\b|\bschiera\w*\b|\brecluta\w*\b/.test(description));
+        }
+
+        function cardMatchesDeployUnit(card) {
+            if (deployUnitFilter === 'all') return true;
+            const unitTerms = {
+                infantry: ['infantry', 'fanteria'],
+                tank: ['tank', 'carro'],
+                airplane: ['airplane', 'aeroplano'],
+                fleet: ['fleet', 'flotta'],
+                carrier: ['carrier', 'portaerei']
+            };
+            const description = normalizeSearchText(`${card['Descrizione / Effetto (EN)'] || ''} ${card['Descrizione / Effetto (IT)'] || ''}`);
+            return (unitTerms[deployUnitFilter] || []).some(term => description.includes(term));
+        }
+
+        function setDeployUnitFilter(value) {
+            deployUnitFilter = value;
+            render();
+        }
+
+        function getAllTrackableCards() {
+            return [...rawData.deck, ...rawData.contingency];
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            })[character]);
+        }
+
+        function extractBgaTableId(value) {
+            const source = String(value || '').trim();
+            const tableUrlMatch = source.match(/[?&]table=(\d+)/i);
+            if (tableUrlMatch) return tableUrlMatch[1];
+            return /^\d+$/.test(source) ? source : '';
+        }
+
+        function getBgaTableId() {
+            const savedId = getTrackerMeta().bgaTableId;
+            return savedId || (/^\d+$/.test(currentTableCode) ? currentTableCode : '');
+        }
+
+        function saveBgaTableId(value) {
+            const tableId = extractBgaTableId(value);
+            if (!tableId) return '';
+            getTrackerMeta().bgaTableId = tableId;
+            saveState();
+            return tableId;
+        }
+
+        function getBgaSyncMeta() {
+            const meta = getTrackerMeta();
+            meta.bgaSync = meta.bgaSync || {};
+            meta.bgaSync.syncedCards = meta.bgaSync.syncedCards || {};
+            return meta.bgaSync;
+        }
+
+        function registerSyncRevealClick() {
+            if (isSyncControlVisible) return;
+
+            syncRevealClicks += 1;
+            if (syncRevealClicks < 5) return;
+
+            syncRevealClicks = 0;
+            isSyncControlVisible = true;
+            const syncButton = document.getElementById('bga-sync-toggle');
+            const revealButton = document.getElementById('sync-reveal-toggle');
+            syncButton.hidden = false;
+            revealButton.setAttribute('aria-expanded', 'true');
+        }
+
+        function setBgaSyncStatus(message, tone = '') {
+            const status = document.getElementById('bga-sync-status');
+            status.className = `sync-status${tone ? ` ${tone}` : ''}`;
+            status.textContent = message;
+        }
+
+        function setBgaSyncPreview(content) {
+            const preview = document.getElementById('bga-sync-preview');
+            preview.innerHTML = content;
+            preview.hidden = false;
+        }
+
+        function postToBgaBridge(type, payload = {}) {
+            window.postMessage({
+                channel: BGA_SYNC_CHANNEL,
+                source: 'qmg-tracker',
+                type,
+                payload
+            }, '*');
+        }
+
+        function probeBgaBridge() {
+            window.clearTimeout(bgaBridgeProbeTimer);
+            postToBgaBridge('bridge-probe');
+            bgaBridgeProbeTimer = window.setTimeout(() => {
+                const modal = document.getElementById('bga-sync-modal');
+                if (!bgaBridgeAvailable && !modal.hidden) {
+                    setBgaSyncStatus('Companion not detected. Open the tracker in the same Chrome or Edge profile where the extension is loaded, with file URL access enabled.', 'error');
+                }
+            }, 850);
+        }
+
+        function openBgaSyncDialog() {
+            const modal = document.getElementById('bga-sync-modal');
+            const tableInput = document.getElementById('bga-table-input');
+            document.getElementById('bga-sync-preview').hidden = true;
+            document.getElementById('bga-apply-button').disabled = true;
+            tableInput.value = getBgaTableId();
+            pendingBgaSync = null;
+            setBgaSyncStatus(bgaBridgeAvailable ? 'Companion detected. Connect the BGA table, then refresh.' : 'Checking for the local BGA companion...');
+            modal.hidden = false;
+            probeBgaBridge();
+            window.setTimeout(() => tableInput.focus(), 0);
+        }
+
+        function closeBgaSyncDialog() {
+            pendingBgaSync = null;
+            window.clearTimeout(bgaBridgeProbeTimer);
+            document.getElementById('bga-sync-modal').hidden = true;
+        }
+
+        function connectBgaSync() {
+            const tableInput = document.getElementById('bga-table-input');
+            const tableId = extractBgaTableId(tableInput.value);
+            if (!tableId) {
+                setBgaSyncStatus('Enter a numeric BGA table code or a BGA table URL.', 'error');
+                return;
+            }
+            saveBgaTableId(tableId);
+            tableInput.value = tableId;
+            pendingBgaSync = null;
+            document.getElementById('bga-apply-button').disabled = true;
+            if (!bgaBridgeAvailable) {
+                setBgaSyncStatus('Companion not detected. Open the tracker in the same Chrome or Edge profile where the extension is loaded, with file URL access enabled.', 'error');
+                probeBgaBridge();
+                return;
+            }
+            setBgaSyncStatus('Waiting for the companion on the matching BGA table...');
+            postToBgaBridge('track-table', { tableId });
+        }
+
+        function refreshBgaSync() {
+            const tableInput = document.getElementById('bga-table-input');
+            const tableId = extractBgaTableId(tableInput.value);
+            if (!tableId) {
+                setBgaSyncStatus('Enter a numeric BGA table code or a BGA table URL first.', 'error');
+                return;
+            }
+            saveBgaTableId(tableId);
+            tableInput.value = tableId;
+            setBgaSyncStatus('Reading events captured by the companion...');
+            postToBgaBridge('get-history', { tableId });
+        }
+
+        function getCardsFromBgaEvent(event) {
+            const source = normalizeSearchText([
+                event.text || '',
+                ...(Array.isArray(event.hints) ? event.hints : [])
+            ].join(' '));
+            if (!source) return [];
+
+            return getAllTrackableCards().filter(card => {
+                const names = [card['Nome Carta (EN)'], card['Nome Carta (IT)']]
+                    .map(normalizeSearchText)
+                    .filter(name => name.length > 3);
+                return names.some(name => source.includes(name));
+            });
+        }
+
+        function formatSyncCardList(cards) {
+            if (cards.length === 0) return '<span>None</span>';
+            const visibleCards = cards.slice(0, 12).map(card => escapeHtml(card['Nome Carta (EN)'] || card['Nome Carta (IT)']));
+            const remaining = cards.length - visibleCards.length;
+            return `<div class="sync-preview-list">${visibleCards.join(' · ')}${remaining > 0 ? ` · +${remaining} more` : ''}</div>`;
+        }
+
+        function previewBgaHistory(history) {
+            const events = Array.isArray(history.events) ? history.events : [];
+            const liveEvents = events
+                .filter(event => event.source === 'live')
+                .sort((a, b) => String(a.updatedAt || a.capturedAt || '').localeCompare(String(b.updatedAt || b.capturedAt || '')));
+            const snapshotCount = events.length - liveEvents.length;
+            const undoCount = liveEvents.filter(event => event.isUndo).length;
+            const cardStates = new Map();
+
+            liveEvents.forEach(event => {
+                getCardsFromBgaEvent(event).forEach(card => {
+                    cardStates.set(card['Nome Carta (IT)'], {
+                        card,
+                        event,
+                        active: !event.reverted
+                    });
+                });
+            });
+
+            const syncMeta = getBgaSyncMeta();
+            const cardsToMark = [];
+            const cardsToRestore = [];
+            const eventIdsByCard = {};
+
+            cardStates.forEach(({ card, event, active }, cardName) => {
+                if (active && !state[cardName]) {
+                    cardsToMark.push(card);
+                    eventIdsByCard[cardName] = event.id;
+                }
+                if (!active && syncMeta.syncedCards[cardName]) {
+                    cardsToRestore.push(card);
+                }
+            });
+
+            pendingBgaSync = { cardsToMark, cardsToRestore, eventIdsByCard };
+            document.getElementById('bga-apply-button').disabled = cardsToMark.length === 0 && cardsToRestore.length === 0;
+
+            if (events.length === 0) {
+                setBgaSyncStatus('No events have been captured yet. Keep the BGA table open, connect it here, then play an action.', 'error');
+                setBgaSyncPreview('<strong>No captured BGA events yet.</strong>');
+                return;
+            }
+
+            const coverage = history.coverageStartedAt
+                ? `Live coverage started ${new Date(history.coverageStartedAt).toLocaleString()}.`
+                : 'Live coverage has not been confirmed by BGA yet.';
+            setBgaSyncStatus(`${coverage} ${liveEvents.length} live event${liveEvents.length === 1 ? '' : 's'} ready for review.`, 'success');
+            setBgaSyncPreview(`
+                <strong>${liveEvents.length} live event${liveEvents.length === 1 ? '' : 's'} captured.</strong>
+                <span>${snapshotCount} existing BGA log item${snapshotCount === 1 ? '' : 's'} ignored as a partial snapshot. Undo notices: <b>${undoCount}</b>.</span>
+                <span>Will mark discarded: <b>${cardsToMark.length}</b>. Will restore: <b>${cardsToRestore.length}</b>.</span>
+                ${formatSyncCardList([...cardsToMark, ...cardsToRestore])}
+            `);
+        }
+
+        function applyBgaSync() {
+            if (!pendingBgaSync) return;
+
+            const syncMeta = getBgaSyncMeta();
+
+            pendingBgaSync.cardsToMark.forEach(card => {
+                const cardName = card['Nome Carta (IT)'];
+                state[cardName] = true;
+                syncMeta.syncedCards[cardName] = {
+                    eventId: pendingBgaSync.eventIdsByCard[cardName],
+                    appliedAt: new Date().toISOString()
+                };
+            });
+            pendingBgaSync.cardsToRestore.forEach(card => {
+                const cardName = card['Nome Carta (IT)'];
+                state[cardName] = false;
+                delete syncMeta.syncedCards[cardName];
+            });
+
+            getTrackerMeta().lastBgaSyncAt = new Date().toISOString();
+            saveState();
+            render();
+            setBgaSyncPreview(`<strong>Applied.</strong><span>${pendingBgaSync.cardsToMark.length} card${pendingBgaSync.cardsToMark.length === 1 ? '' : 's'} marked and ${pendingBgaSync.cardsToRestore.length} restored.</span>`);
+            pendingBgaSync = null;
+            document.getElementById('bga-apply-button').disabled = true;
+        }
+
+        window.addEventListener('message', event => {
+            if (event.source !== window) return;
+            const message = event.data || {};
+            if (message.channel !== BGA_SYNC_CHANNEL || message.source !== 'qmg-bga-bridge') return;
+
+            const modal = document.getElementById('bga-sync-modal');
+            const payload = message.payload || {};
+            if (message.type === 'bridge-ready') {
+                bgaBridgeAvailable = true;
+                window.clearTimeout(bgaBridgeProbeTimer);
+                if (!modal.hidden) setBgaSyncStatus('Companion detected. Enter the BGA table code and connect it.', 'success');
+            }
+
+            if (message.type === 'sync-started' && !modal.hidden) {
+                setBgaSyncStatus(payload.message || 'Connected. The companion is now observing new BGA log entries.', 'success');
+            }
+
+            if (message.type === 'sync-history' && !modal.hidden) {
+                bgaBridgeAvailable = true;
+                previewBgaHistory(payload);
+            }
+
+            if (message.type === 'sync-error' && !modal.hidden) {
+                setBgaSyncStatus(payload.message || 'The BGA companion could not complete the request.', 'error');
+            }
+        });
 
         function render() {
             const targetFactions = currentFaction === 'Asse' ? ['Patto', 'Germania'] : ['UK', 'USA', 'Francia'];
@@ -1466,11 +2127,18 @@
             document.getElementById('hand-size-title').innerText = currentFaction === 'Asse' ? 'AXIS HAND SIZE' : 'ALLIES HAND SIZE';
             document.getElementById('hand-size-input').value = handSize;
             document.getElementById('blind-input').value = blindDiscards;
+            document.getElementById('deploy-unit-control').hidden = currentFilter !== 'deploy';
+            document.getElementById('deploy-unit-select').value = deployUnitFilter;
 
             // Update Active Reaction Pill Box
             const pillBox = document.getElementById('active-reaction-pill-box');
-            if (selectedReactionFilter) {
-                pillBox.innerHTML = `<span class="active-reaction-pill">${getReactionIcon(selectedReactionFilter)} ${selectedReactionFilter} <button class="clear-reaction-btn" onclick="clearReactionFilter()" title="Clear Reaction Filter">✖</button></span>`;
+            if (selectedReactionFilters.length > 0) {
+                pillBox.innerHTML = selectedReactionFilters.map(filter => `
+                    <span class="active-reaction-pill">
+                        ${getFactionMiniIcon(filter.faction)}${getReactionIcon(filter.reaction)} ${getFactionFlag(filter.faction)} ${filter.reaction}
+                        <button class="clear-reaction-btn" onclick="removeReactionFilter('${filter.faction}', '${filter.reaction}')" title="Remove reaction filter">✖</button>
+                    </span>
+                `).join('');
             } else {
                 pillBox.innerHTML = '';
             }
@@ -1556,11 +2224,11 @@
                             terrNote = `<div class="terr-inline">📍 Locations: ${terrObj[item.key].join(', ')}</div>`;
                         }
 
-                        const isSelected = (selectedReactionFilter === item.key);
+                        const isSelected = isReactionFilterSelected(f, item.key);
 
                         const rRow = document.createElement('div');
                         rRow.className = `reaction-row-compact ${isSelected ? 'active-filter' : ''}`;
-                        rRow.onclick = function() { toggleReactionFilter(item.key); };
+                        rRow.onclick = function() { toggleReactionFilter(f, item.key); };
                         rRow.innerHTML = `
                             <div>
                                 <div class="reaction-row-left">
@@ -1590,12 +2258,9 @@
                 const isPlayed = !!state[c['Nome Carta (IT)']];
                 const descEN = (c['Descrizione / Effetto (EN)'] || '').toLowerCase();
                 const descIT = (c['Descrizione / Effetto (IT)'] || '').toLowerCase();
-                const reactEN = c['Reazione (EN)'] || '';
 
-                // Reaction Filter
-                if (selectedReactionFilter) {
-                    if (!reactEN.includes(selectedReactionFilter)) return false;
-                }
+                if (!cardMatchesSearch(c)) return false;
+                if (!cardMatchesSelectedReactions(c)) return false;
 
                 // Standard Filters
                 if (currentFilter === 'deck') return !isPlayed && (includeLateWar || c['Fase (Beginners/Early/Late)'] !== 'Tardivo');
@@ -1606,7 +2271,7 @@
 
                 // Action / Category Filters
                 if (currentFilter === 'deploy') {
-                    return descEN.includes('deploy') || descEN.includes('recruit') || descIT.includes('schiera') || descIT.includes('recluta');
+                    return isDeployCard(c) && cardMatchesDeployUnit(c);
                 }
                 if (currentFilter === 'attack') {
                     return descEN.includes('attack') || descIT.includes('attacca');
@@ -1677,7 +2342,7 @@
                         <div class="card-text">${descText}</div>
                     </div>
                     <div class="card-footer">
-                        <span class="reaction-label" onclick="toggleReactionFilter('${reactText.includes('Stand Fast') ? 'Stand Fast' : reactText}')" title="Filter by this reaction">
+                        <span class="reaction-label" onclick="toggleReactionFilter('${c['Fazione']}', '${reactText.includes('Stand Fast') ? 'Stand Fast' : reactText}')" title="Filter by this faction reaction">
                             ${getReactionIcon(c['Reazione (EN)'])}${getReactionLabel(reactText)}
                         </span>
                         <button class="toggle-btn" onclick="handleCardToggle('${c['Nome Carta (IT)'].replace(/'/g, "\'")}', ${isLateLocked})">
@@ -1736,6 +2401,26 @@
                 contGrid.appendChild(cardEl);
             });
         }
+
+        document.addEventListener('keydown', event => {
+            const isSearchShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+            const syncModal = document.getElementById('bga-sync-modal');
+            if (isSearchShortcut && syncModal.hidden) {
+                event.preventDefault();
+                const searchControl = document.getElementById('card-search-control');
+                if (searchControl.hidden) toggleCardSearch();
+                else document.getElementById('card-search-input').focus();
+                return;
+            }
+
+            if (event.key === 'Escape') {
+                if (!syncModal.hidden) {
+                    closeBgaSyncDialog();
+                } else if (!document.getElementById('card-search-control').hidden) {
+                    closeCardSearch();
+                }
+            }
+        });
 
         // Initial setup
         renderTableDropdown();
