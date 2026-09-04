@@ -299,6 +299,34 @@
             border: 1px solid #cbd5e1;
         }
 
+        .side-selector {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .side-selector-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .side-selector-btn {
+            min-height: 30px;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #334155;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .side-selector-btn.axis.active { background: #991b1b; border-color: #7f1d1d; color: #ffffff; }
+        .side-selector-btn.allies.active { background: #1e40af; border-color: #1e3a8a; color: #ffffff; }
+
         .phase-switch-title {
             font-size: 0.75rem;
             color: #78350f;
@@ -531,6 +559,27 @@
             outline-offset: 1px;
         }
 
+        .view-toggle {
+            display: inline-flex;
+            gap: 2px;
+            padding: 2px;
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            background: #f1f5f9;
+        }
+
+        .view-toggle .toolbar-icon-btn {
+            width: 26px;
+            height: 26px;
+            border: 0;
+            border-radius: 3px;
+        }
+
+        .view-toggle .toolbar-icon-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
         .card-search-control {
             display: inline-flex;
             align-items: center;
@@ -745,7 +794,8 @@
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 285px));
+            justify-content: center;
             gap: 14px;
             max-height: none;
             overflow: visible;
@@ -757,8 +807,9 @@
             --card-art-index: 0;
             position: relative;
             isolation: isolate;
-            width: 90%;
+            width: 100%;
             justify-self: center;
+            aspect-ratio: 0.74;
             min-height: 350px;
             overflow: hidden;
             border-radius: 4px;
@@ -805,6 +856,96 @@
             filter: grayscale(82%);
             border-color: #5a6361 !important;
             border-style: solid !important;
+        }
+
+        .card-item.is-marking {
+            opacity: 0.55;
+            filter: grayscale(82%);
+            transform: scale(0.986);
+        }
+
+        .card-item.played.is-restoring {
+            opacity: 1;
+            filter: none;
+            transform: scale(1.012);
+        }
+
+        .card-item.is-marking .toggle-btn,
+        .card-item.is-restoring .toggle-btn {
+            pointer-events: none;
+        }
+
+        .recap-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .recap-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 32px;
+            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            border-left: 6px solid #64748b;
+            border-radius: 4px;
+            background: #ffffff;
+        }
+
+        .recap-row.patto { border-left-color: #64748b; }
+        .recap-row.germania { border-left-color: #1e293b; }
+        .recap-row.uk { border-left-color: #8b651d; }
+        .recap-row.usa { border-left-color: #38683e; }
+        .recap-row.francia { border-left-color: #315fa5; }
+        .recap-row.soviet { border-left-color: #a61b1b; }
+
+        .recap-row.played { opacity: 0.52; }
+
+        .recap-row.late-locked {
+            opacity: 0.48;
+            background: #f8fafc;
+        }
+
+        .recap-row.played.late-locked { opacity: 0.35; }
+
+        .recap-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            color: #17231e;
+            font-family: "Berringer", "Arial Narrow", sans-serif;
+            font-size: 0.82rem;
+            font-weight: 400;
+            line-height: 1.08;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .recap-reaction {
+            display: inline-grid;
+            flex: 0 0 22px;
+            width: 22px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recap-reaction .reaction-icon {
+            filter: brightness(0) opacity(0.72);
+        }
+
+        .recap-reaction .reaction-icon-fallback {
+            color: #374151;
+            background: transparent;
+        }
+
+        .recap-lock {
+            flex: 0 0 18px;
+            width: 18px;
+            color: #64748b;
+            font-size: 0.78rem;
+            line-height: 1;
+            text-align: center;
         }
 
         .card-header {
@@ -1207,6 +1348,14 @@
                 </div>
             </div>
 
+            <div class="side-selector">
+                <div class="stat-title">Your Side</div>
+                <div class="side-selector-buttons" role="group" aria-label="Your side">
+                    <button class="side-selector-btn axis" id="player-axis-button" type="button" onclick="setPlayerSide('Asse')">Axis</button>
+                    <button class="side-selector-btn allies" id="player-allies-button" type="button" onclick="setPlayerSide('Alleati')">Allies</button>
+                </div>
+            </div>
+
             <!-- Dynamic Faction Hand Size Input -->
             <div class="counter-box hand">
                 <div class="stat-title" id="hand-size-title">AXIS HAND SIZE</div>
@@ -1235,7 +1384,7 @@
 
             <!-- Deck Stats -->
             <div class="stat-box">
-                <div class="stat-title">Remaining Deck</div>
+                <div class="stat-title" id="deck-remaining-title">Remaining Deck</div>
                 <div class="stat-value" id="deck-remaining">0 cards</div>
                 <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;" id="deck-sub-breakdown">
                     <!-- Breakdown -->
@@ -1263,13 +1412,17 @@
             
             <div class="filters" id="filter-buttons-container">
                 <button class="toolbar-icon-btn" type="button" onclick="toggleCardSearch()" title="Search cards (Ctrl/Cmd + K)" aria-label="Search cards">&#128269;</button>
+                <div class="view-toggle" role="group" aria-label="Card display">
+                    <button class="toolbar-icon-btn active" id="view-cards-button" type="button" onclick="setCardView('cards')" title="Card view" aria-label="Card view">&#9638;</button>
+                    <button class="toolbar-icon-btn" id="view-recap-button" type="button" onclick="setCardView('recap')" title="Recap view" aria-label="Recap view">&#8801;</button>
+                </div>
                 <div class="card-search-control" id="card-search-control" hidden>
                     <input class="card-search-input" id="card-search-input" type="search" placeholder="Search card name..." autocomplete="off" oninput="onCardSearchInput()" aria-label="Search card name">
                     <button class="toolbar-icon-btn" type="button" onclick="closeCardSearch()" title="Clear search" aria-label="Clear search">&#215;</button>
                 </div>
                 <button class="filter-btn active" onclick="setFilter('all', this)" id="f-all">All Cards</button>
                 <button class="filter-btn" onclick="setFilter('deck', this)" id="f-deck">In Deck / Probable</button>
-                <button class="filter-btn" onclick="setFilter('played', this)" id="f-played">Discarded Revealed</button>
+                <button class="filter-btn" onclick="setFilter('played', this)" id="f-played">Revealed</button>
                 
                 <div class="filter-divider"></div>
 
@@ -1302,9 +1455,10 @@
 
             <!-- Main Card Grid -->
             <div class="card-grid" id="main-card-grid"></div>
+            <div class="recap-grid" id="recap-grid" hidden></div>
 
             <!-- Collapsible Contingency Section -->
-            <div class="contingency-box">
+            <div class="contingency-box" id="contingency-box">
                 <div class="contingency-header-bar" onclick="toggleContingencyBox()">
                     <div class="contingency-title-text">
                         <span>🔮 CONTINGENCY CARDS (Public Info)</span>
@@ -1380,13 +1534,48 @@
             }
         };
 
-        function getEditionStorageKey(tableId) {
-            return 'qmg_table_edition_' + (tableId || 'TABLE-1').toUpperCase();
+        function getActiveEditionStorageKey() {
+            return 'qmg_active_edition';
         }
 
-        function getSavedEdition(tableId) {
-            const savedEdition = localStorage.getItem(getEditionStorageKey(tableId));
-            return GAME_EDITIONS[savedEdition] ? savedEdition : 'south-front';
+        function getTablesListStorageKey(edition) {
+            return `qmg_tables_list_${edition}`;
+        }
+
+        function getActiveTableStorageKey(edition) {
+            return `qmg_active_table_${edition}`;
+        }
+
+        function normalizeTableCode(tableId) {
+            return String(tableId || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        }
+
+        function normalizeTablesList(list) {
+            if (!Array.isArray(list)) return [];
+            return [...new Set(list.map(normalizeTableCode).filter(Boolean))];
+        }
+
+        function readTablesList(storageKey) {
+            try {
+                return normalizeTablesList(JSON.parse(localStorage.getItem(storageKey)));
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function getTablesWithSavedState(edition) {
+            const prefix = 'qmg_tracker_state_';
+            const suffix = `_${edition}`;
+            const foundTables = [];
+
+            for (let index = 0; index < localStorage.length; index += 1) {
+                const storageKey = localStorage.key(index);
+                if (storageKey && storageKey.startsWith(prefix) && storageKey.endsWith(suffix)) {
+                    foundTables.push(storageKey.slice(prefix.length, -suffix.length));
+                }
+            }
+
+            return normalizeTablesList(foundTables);
         }
 
         function getCurrentEdition() {
@@ -1402,28 +1591,35 @@
             return currentFaction === 'Asse' ? edition.axisFactions : edition.alliesFactions;
         }
 
-        function getTablesList() {
-            let list = JSON.parse(localStorage.getItem('qmg_tables_list'));
-            if (!list || !Array.isArray(list) || list.length === 0) {
-                list = ['TABLE-1'];
-                localStorage.setItem('qmg_tables_list', JSON.stringify(list));
-            }
+        function getTablesList(edition = currentEdition) {
+            let list = readTablesList(getTablesListStorageKey(edition));
+            if (list.length > 0) return list;
+
+            // Preserve the original shared list for South Front, then let every edition own its list.
+            list = edition === 'south-front'
+                ? readTablesList('qmg_tables_list')
+                : getTablesWithSavedState(edition);
+
+            if (list.length === 0) list = ['TABLE-1'];
+            saveTablesList(list, edition);
             return list;
         }
 
-        function saveTablesList(list) {
-            localStorage.setItem('qmg_tables_list', JSON.stringify(list));
+        function saveTablesList(list, edition = currentEdition) {
+            localStorage.setItem(getTablesListStorageKey(edition), JSON.stringify(normalizeTablesList(list)));
         }
 
-        let tablesList = getTablesList();
-        let currentTableCode = (localStorage.getItem('qmg_active_table') || tablesList[0]).toUpperCase();
-
-        if (!tablesList.includes(currentTableCode)) {
-            tablesList.push(currentTableCode);
-            saveTablesList(tablesList);
+        function getActiveTableCode(edition, list) {
+            const legacyActiveTable = edition === 'south-front' ? localStorage.getItem('qmg_active_table') : '';
+            const savedTable = localStorage.getItem(getActiveTableStorageKey(edition)) || legacyActiveTable;
+            const tableCode = normalizeTableCode(savedTable);
+            return list.includes(tableCode) ? tableCode : list[0];
         }
 
-        let currentEdition = getSavedEdition(currentTableCode);
+        let currentEdition = localStorage.getItem(getActiveEditionStorageKey());
+        if (!GAME_EDITIONS[currentEdition]) currentEdition = 'south-front';
+        let tablesList = getTablesList(currentEdition);
+        let currentTableCode = getActiveTableCode(currentEdition, tablesList);
         let currentFaction = 'Asse';
         let includeLateWar = false;
         let currentFilter = 'all';
@@ -1436,6 +1632,7 @@
         let bgaBridgeAvailable = false;
         let bgaBridgeProbeTimer = null;
         const BGA_SYNC_CHANNEL = 'qmg-south-front-bga-sync';
+        const BGA_COMPANION_UNAVAILABLE_MESSAGE = "Companion not detected. It cannot run in Codex's in-app browser. Open the tracker directly in the same Chrome or Edge profile where the extension is loaded, enable file URL access, then reload the tracker.";
         let isContingencyCollapsed = JSON.parse(localStorage.getItem('qmg_cont_collapsed')) || false;
         
         function getTableStorageKey(tableId, edition = currentEdition) {
@@ -1444,10 +1641,31 @@
         }
 
         let state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
+        const pendingCardTransitions = new Set();
 
         function getTrackerMeta() {
             state.__qmgTracker = state.__qmgTracker || {};
             return state.__qmgTracker;
+        }
+
+        function getPlayerSide() {
+            return getTrackerMeta().playerSide === 'Alleati' ? 'Alleati' : 'Asse';
+        }
+
+        function getOpponentSide(side = getPlayerSide()) {
+            return side === 'Asse' ? 'Alleati' : 'Asse';
+        }
+
+        function isTrackingOpponent() {
+            return currentFaction !== getPlayerSide();
+        }
+
+        function getCardStateLabel() {
+            return isTrackingOpponent() ? 'Revealed' : 'Discarded';
+        }
+
+        function getCardViewMode() {
+            return getTrackerMeta().cardViewMode === 'recap' ? 'recap' : 'cards';
         }
 
         function getFactionBlindDiscards() {
@@ -1513,8 +1731,8 @@
             saveState(); // Save state of current table first
             const select = document.getElementById('table-select');
             currentTableCode = select.value;
-            currentEdition = getSavedEdition(currentTableCode);
             state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
+            currentFaction = getOpponentSide();
             saveState();
             render();
         }
@@ -1525,14 +1743,18 @@
 
             saveState();
             currentEdition = nextEdition;
+            localStorage.setItem(getActiveEditionStorageKey(), currentEdition);
+            tablesList = getTablesList(currentEdition);
+            currentTableCode = getActiveTableCode(currentEdition, tablesList);
             currentFaction = 'Asse';
             includeLateWar = false;
             selectedReactionFilters = [];
             cardSearchQuery = '';
             deployUnitFilter = 'all';
-            localStorage.setItem(getEditionStorageKey(currentTableCode), currentEdition);
             state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
+            currentFaction = getOpponentSide();
             saveState();
+            renderTableDropdown();
             render();
         }
 
@@ -1548,8 +1770,8 @@
                 saveTablesList(tablesList);
             }
             currentTableCode = cleanName;
-            localStorage.setItem(getEditionStorageKey(currentTableCode), currentEdition);
             state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
+            currentFaction = getOpponentSide();
             saveState();
             renderTableDropdown();
             render();
@@ -1561,14 +1783,12 @@
                 return;
             }
             if (confirm("Are you sure you want to delete table '" + currentTableCode + "'? All saved state for this table will be deleted.")) {
-                localStorage.removeItem(getTableStorageKey(currentTableCode, 'south-front'));
-                localStorage.removeItem(getTableStorageKey(currentTableCode, 'east-front'));
-                localStorage.removeItem(getEditionStorageKey(currentTableCode));
+                localStorage.removeItem(getTableStorageKey(currentTableCode));
                 tablesList = tablesList.filter(t => t !== currentTableCode);
                 saveTablesList(tablesList);
                 currentTableCode = tablesList[0];
-                currentEdition = getSavedEdition(currentTableCode);
                 state = JSON.parse(localStorage.getItem(getTableStorageKey(currentTableCode))) || {};
+                currentFaction = getOpponentSide();
                 saveState();
                 renderTableDropdown();
                 render();
@@ -1717,7 +1937,9 @@
 
         function saveState() {
             localStorage.setItem(getTableStorageKey(currentTableCode), JSON.stringify(state));
-            localStorage.setItem('qmg_active_table', currentTableCode);
+            localStorage.setItem(getActiveEditionStorageKey(), currentEdition);
+            localStorage.setItem(getActiveTableStorageKey(currentEdition), currentTableCode);
+            if (currentEdition === 'south-front') localStorage.setItem('qmg_active_table', currentTableCode);
             localStorage.setItem('qmg_cont_collapsed', JSON.stringify(isContingencyCollapsed));
         }
 
@@ -1757,10 +1979,24 @@
             return `<img class="reaction-icon" src="links/${match.file}" alt="" aria-hidden="true">`;
         }
 
+        const standFastRequirementTranslations = {
+            'Atene o Creta': 'Athens or Crete',
+            'Gibilterra': 'Gibraltar',
+            'Egitto o El Alamein': 'Egypt or El Alamein',
+            'Malta': 'Malta',
+            'Roma o Napoli': 'Rome or Naples'
+        };
+
+        function getStandFastRequirement(reaction) {
+            const standFast = reaction && reaction.match(/^Stand Fast\s*\(([^)]*)\)$/i);
+            if (!standFast) return '';
+            return standFastRequirementTranslations[standFast[1]] || standFast[1];
+        }
+
         function getReactionLabel(reaction) {
-            const standFast = reaction && reaction.match(/^(Stand Fast)\s*(\([^)]*\))$/i);
-            if (!standFast) return reaction;
-            return `${standFast[1]}<span class="reaction-location">${standFast[2]}</span>`;
+            const requirement = getStandFastRequirement(reaction);
+            if (!requirement) return reaction;
+            return `Stand Fast<span class="reaction-location">(${requirement})</span>`;
         }
 
         function adjustHandSize(delta) {
@@ -1819,6 +2055,22 @@
             render();
         }
 
+        function setPlayerSide(side) {
+            if (side !== 'Asse' && side !== 'Alleati') return;
+            getTrackerMeta().playerSide = side;
+            currentFaction = getOpponentSide(side);
+            selectedReactionFilters = [];
+            saveState();
+            render();
+        }
+
+        function setCardView(viewMode) {
+            if (viewMode !== 'cards' && viewMode !== 'recap') return;
+            getTrackerMeta().cardViewMode = viewMode;
+            saveState();
+            render();
+        }
+
         function toggleLateWar(val) {
             includeLateWar = val;
             document.getElementById('btn-late-off').classList.toggle('active', !val);
@@ -1828,23 +2080,40 @@
             render();
         }
 
-        function handleCardToggle(cardName, isLateLocked) {
+        function handleCardToggle(cardName, isLateLocked, cardElement) {
             if (isLateLocked && !includeLateWar && !state[cardName]) {
-                if (confirm("This card belongs to Late War and is currently locked.\n\nDo you want to enable '2. + Late War' mode and mark this card as used?")) {
+                if (confirm("This card belongs to Late War and is currently locked.\n\nDo you want to enable '2. + Late War' mode and mark this card as " + getCardStateLabel().toLowerCase() + "?")) {
                     toggleLateWar(true);
                     toggleCard(cardName);
                 }
                 return;
             }
-            toggleCard(cardName);
+            toggleCard(cardName, cardElement);
         }
 
-        function toggleCard(cardName) {
-            state[cardName] = !state[cardName];
+        function toggleCard(cardName, cardElement = null) {
+            if (pendingCardTransitions.has(cardName)) return;
+
+            const isBeingMarked = !state[cardName];
+            state[cardName] = isBeingMarked;
             const syncMeta = getBgaSyncMeta();
             delete syncMeta.syncedCards[cardName];
             saveState();
-            render();
+
+            if (!cardElement) {
+                render();
+                return;
+            }
+
+            pendingCardTransitions.add(cardName);
+            cardElement.classList.add(isBeingMarked ? 'is-marking' : 'is-restoring');
+            const button = cardElement.querySelector('.toggle-btn');
+            if (button) button.disabled = true;
+
+            setTimeout(() => {
+                pendingCardTransitions.delete(cardName);
+                render();
+            }, 180);
         }
 
         function resetCurrentFaction() {
@@ -2064,7 +2333,7 @@
             bgaBridgeProbeTimer = window.setTimeout(() => {
                 const modal = document.getElementById('bga-sync-modal');
                 if (!bgaBridgeAvailable && !modal.hidden) {
-                    setBgaSyncStatus('Companion not detected. Open the tracker in the same Chrome or Edge profile where the extension is loaded, with file URL access enabled.', 'error');
+                    setBgaSyncStatus(BGA_COMPANION_UNAVAILABLE_MESSAGE, 'error');
                 }
             }, 850);
         }
@@ -2100,7 +2369,7 @@
             pendingBgaSync = null;
             document.getElementById('bga-apply-button').disabled = true;
             if (!bgaBridgeAvailable) {
-                setBgaSyncStatus('Companion not detected. Open the tracker in the same Chrome or Edge profile where the extension is loaded, with file URL access enabled.', 'error');
+                setBgaSyncStatus(BGA_COMPANION_UNAVAILABLE_MESSAGE, 'error');
                 probeBgaBridge();
                 return;
             }
@@ -2193,7 +2462,7 @@
             setBgaSyncPreview(`
                 <strong>${liveEvents.length} live event${liveEvents.length === 1 ? '' : 's'} captured.</strong>
                 <span>${snapshotCount} existing BGA log item${snapshotCount === 1 ? '' : 's'} ignored as a partial snapshot. Undo notices: <b>${undoCount}</b>.</span>
-                <span>Will mark discarded: <b>${cardsToMark.length}</b>. Will restore: <b>${cardsToRestore.length}</b>.</span>
+                <span>Will reveal: <b>${cardsToMark.length}</b>. Will restore: <b>${cardsToRestore.length}</b>.</span>
                 ${formatSyncCardList([...cardsToMark, ...cardsToRestore])}
             `);
         }
@@ -2252,12 +2521,46 @@
             }
         });
 
+        function renderRecapList(cards) {
+            const recapGrid = document.getElementById('recap-grid');
+            recapGrid.innerHTML = '';
+
+            cards.forEach(card => {
+                const title = card['Nome Carta (EN)'] || card['Nome Carta (IT)'];
+                const reaction = card['Reazione (EN)'] || 'None';
+                const isLateLocked = !includeLateWar && card['Fase (Beginners/Early/Late)'] === 'Tardivo';
+                const row = document.createElement('div');
+                row.className = `recap-row ${getFactionClass(card['Fazione'])} ${state[card['Nome Carta (IT)']] ? 'played' : ''} ${isLateLocked ? 'late-locked' : ''}`;
+                row.title = `${getFactionFlag(card['Fazione'])} - ${title}${isLateLocked ? ' (available in Late War)' : ''}`;
+                row.innerHTML = `
+                    <span class="recap-reaction" title="${escapeHtml(reaction)}">${getReactionIcon(reaction)}</span>
+                    <span class="recap-title">${escapeHtml(title)}</span>
+                    ${isLateLocked ? '<span class="recap-lock" title="Available in Late War" aria-label="Available in Late War">🔒</span>' : ''}
+                `;
+                recapGrid.appendChild(row);
+            });
+        }
+
         function render() {
             renderEditionMetadata();
             const targetFactions = getTargetFactions();
             const handSize = getFactionHandSize();
             const blindDiscards = getFactionBlindDiscards();
-            document.getElementById('hand-size-title').innerText = currentFaction === 'Asse' ? 'AXIS HAND SIZE' : 'ALLIES HAND SIZE';
+            const playerSide = getPlayerSide();
+            const trackingOpponent = isTrackingOpponent();
+            const trackedSideLabel = currentFaction === 'Asse' ? 'AXIS' : 'ALLIES';
+            const cardStateLabel = getCardStateLabel();
+            const viewMode = getCardViewMode();
+
+            document.getElementById('btn-axis').classList.toggle('active', currentFaction === 'Asse');
+            document.getElementById('btn-allies').classList.toggle('active', currentFaction === 'Alleati');
+            document.getElementById('player-axis-button').classList.toggle('active', playerSide === 'Asse');
+            document.getElementById('player-allies-button').classList.toggle('active', playerSide === 'Alleati');
+            document.getElementById('view-cards-button').classList.toggle('active', viewMode === 'cards');
+            document.getElementById('view-recap-button').classList.toggle('active', viewMode === 'recap');
+            document.getElementById('hand-size-title').innerText = `${trackedSideLabel} HAND SIZE${trackingOpponent ? ' (OPPONENT)' : ' (YOU)'}`;
+            document.getElementById('deck-remaining-title').innerText = `${trackedSideLabel} DECK`;
+            document.getElementById('f-played').innerText = cardStateLabel;
             document.getElementById('hand-size-input').value = handSize;
             document.getElementById('blind-input').value = blindDiscards;
             document.getElementById('deploy-unit-control').hidden = currentFilter !== 'deploy';
@@ -2310,7 +2613,7 @@
                         if (reactEN.includes('Stand Fast')) {
                             key = 'Stand Fast';
                             if (!factionReactions[faction].territories[key]) factionReactions[faction].territories[key] = [];
-                            const terr = reactEN.replace('Stand Fast (', '').replace(')', '');
+                            const terr = getStandFastRequirement(reactEN);
                             factionReactions[faction].territories[key].push(terr);
                         }
 
@@ -2354,7 +2657,7 @@
 
                         let terrNote = '';
                         if (item.key.includes('Stand Fast') && terrObj[item.key]) {
-                            terrNote = `<div class="terr-inline">📍 Locations: ${terrObj[item.key].join(', ')}</div>`;
+                            terrNote = `<div class="terr-inline">Requirements: ${terrObj[item.key].join(', ')}</div>`;
                         }
 
                         const isSelected = isReactionFilterSelected(f, item.key);
@@ -2385,12 +2688,18 @@
 
             // 3. Render Main Card Grid
             const mainGrid = document.getElementById('main-card-grid');
+            const recapGrid = document.getElementById('recap-grid');
+            const contingencyBox = document.getElementById('contingency-box');
             mainGrid.innerHTML = '';
+            mainGrid.hidden = viewMode === 'recap';
+            recapGrid.hidden = viewMode !== 'recap';
+            contingencyBox.hidden = viewMode === 'recap';
 
             let filteredDeck = deckList.filter(c => {
                 const isPlayed = !!state[c['Nome Carta (IT)']];
                 const descEN = (c['Descrizione / Effetto (EN)'] || '').toLowerCase();
                 const descIT = (c['Descrizione / Effetto (IT)'] || '').toLowerCase();
+                const isSeasonDependent = /\b(spring|summer|autumn|fall|winter|primavera|estate|autunno|inverno)\b/.test(`${descEN} ${descIT}`);
 
                 if (!cardMatchesSearch(c)) return false;
                 if (!cardMatchesSelectedReactions(c)) return false;
@@ -2419,7 +2728,7 @@
                     return descEN.includes('vp') || descIT.includes('punto vittoria') || descIT.includes('punti vittoria');
                 }
                 if (currentFilter === 'conditional') {
-                    return descEN.includes('unless') || descIT.includes('a meno che') || descEN.includes('if ') || descIT.includes('se ');
+                    return !isSeasonDependent && (descEN.includes('unless') || descIT.includes('a meno che') || descEN.includes('if ') || descIT.includes('se '));
                 }
 
                 return true;
@@ -2437,6 +2746,9 @@
                 return 0;
             });
 
+            if (viewMode === 'recap') {
+                renderRecapList(filteredDeck);
+            } else {
             filteredDeck.forEach(c => {
                 const isPlayed = !!state[c['Nome Carta (IT)']];
                 const isLateLocked = !includeLateWar && c['Fase (Beginners/Early/Late)'] === 'Tardivo';
@@ -2479,13 +2791,14 @@
                         <span class="reaction-label" onclick="toggleReactionFilter('${c['Fazione']}', '${reactText.includes('Stand Fast') ? 'Stand Fast' : reactText}')" title="Filter by this faction reaction">
                             ${getReactionIcon(c['Reazione (EN)'])}${getReactionLabel(reactText)}
                         </span>
-                        <button class="toggle-btn" onclick="handleCardToggle(${cardNameArg}, ${isLateLocked})">
-                            ${isPlayed ? 'Restore' : (isLateLocked ? '🔒 Mark Discarded' : 'Mark Discarded')}
+                        <button class="toggle-btn" onclick="handleCardToggle(${cardNameArg}, ${isLateLocked}, this.closest('.card-item'))">
+                            ${isPlayed ? 'Restore' : (isLateLocked ? '🔒 Locked' : cardStateLabel)}
                         </button>
                     </div>
                 `;
                 mainGrid.appendChild(cardEl);
             });
+            }
 
             // 4. Render Contingency Cards
             const contGrid = document.getElementById('contingency-grid');
@@ -2528,8 +2841,8 @@
                     </div>
                     <div class="card-footer">
                         <span class="reaction-label">${c['Fazione']}</span>
-                        <button class="toggle-btn" onclick="toggleCard(${cardNameArg})">
-                            ${isPlayed ? 'Restore' : 'Mark Used'}
+                        <button class="toggle-btn" onclick="toggleCard(${cardNameArg}, this.closest('.card-item'))">
+                            ${isPlayed ? 'Restore' : 'Used'}
                         </button>
                     </div>
                 `;
@@ -2558,6 +2871,7 @@
         });
 
         // Initial setup
+        currentFaction = getOpponentSide();
         renderTableDropdown();
         renderContingencyState();
         render();
